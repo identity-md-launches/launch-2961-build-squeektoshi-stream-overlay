@@ -16,9 +16,7 @@
     widget: { file: 'widget.html', width: 480, height: 270, label: 'Corner widget' }
   };
   const DEFAULT_STALE_SECONDS = 120;
-  const CLOCK_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
   const MAX_RUNNING_STEP_MS = 30 * 1000;
-  const RECORD_MIN_MM = 1000;
   const SESSION_MAX_AGE_MS = 12 * 60 * 60 * 1000;
   const TOKEN_RE = /^[A-Za-z0-9_-]{1,32}$/;
 
@@ -337,18 +335,25 @@
     const r = Number.isFinite(rpm) && rpm > 0 ? rpm : 0;
     return { wheelDegPerSecond: r * 6, legFramesPerSecond: Math.min(24, r * 0.25) };
   }
-  /* The age check compares server timestamps, so a wrong streaming-PC clock cannot fake a lost signal.
-     A very old reading against the local clock is still refused, with a generous tolerance. */
+  /* Age is measured against the local clock with no allowance: a cached response can agree with itself and
+     still be old. generatedAt - observedAt stays as a second check, for a server handing out an old measurement.
+     A reading without observedAt is aged by generatedAt. */
   function freshnessVerdict(reading, now) {
     if (!reading) return { ok: false, reason: 'invalid' };
     if (reading.freshness !== 'online') return { ok: false, reason: 'not-online' };
     const limit = reading.staleAfterSeconds * 1000;
-    if (reading.observedAtMs !== null) {
-      const reference = reading.generatedAtMs !== null ? reading.generatedAtMs : now;
-      if (reference - reading.observedAtMs > limit) return { ok: false, reason: 'stale' };
-      if (now - reading.observedAtMs > limit + CLOCK_SKEW_TOLERANCE_MS) return { ok: false, reason: 'stale' };
+    const seenAt = reading.observedAtMs !== null ? reading.observedAtMs : reading.generatedAtMs;
+    if (seenAt !== null && now - seenAt > limit) return { ok: false, reason: 'stale' };
+    if (reading.generatedAtMs !== null && seenAt !== null && reading.generatedAtMs - seenAt > limit) {
+      return { ok: false, reason: 'stale' };
     }
     return { ok: true, reason: null };
+  }
+  /* Requests run start to start, so response time is not added to the interval. The request timeout is shorter
+     than the interval, so waiting for one to finish never overlaps or delays the next. */
+  function nextPollDelay(pollSeconds, startedAt, now) {
+    const interval = pollSeconds * 1000;
+    return Math.min(interval, Math.max(0, interval - (now - startedAt)));
   }
 
   /* ---------- Stream session ---------- */
@@ -403,6 +408,9 @@
       }
     };
   }
+  function runningStep(previousAt, now) {
+    return Math.min(MAX_RUNNING_STEP_MS, Math.max(0, now - previousAt));
+  }
   /* Applies one fresh reading. Returns the distance of a run that just ended as a new record, else null. */
   function applySessionReading(session, reading, previousStatus, previousAt, now) {
     const d = reading.distanceMm;
@@ -421,7 +429,7 @@
       }
     }
     if (previousStatus === 'SPINNING' && previousAt !== null) {
-      session.runningMs += Math.min(MAX_RUNNING_STEP_MS, Math.max(0, now - previousAt));
+      session.runningMs += runningStep(previousAt, now);
     }
     if (reading.coreStatus === 'SPINNING' && session.runStartMm === null && session.lastMm !== null) {
       session.runStartMm = session.lastMm;
@@ -432,7 +440,7 @@
       session.runStartMm = null;
       if (run > session.recordMm) {
         session.recordMm = run;
-        if (run >= RECORD_MIN_MM) return run;
+        return run;
       }
     }
     return null;
@@ -457,7 +465,12 @@
       coreStatus: null, rpm: null, speedMmPerSecond: null, distanceMm: null, workUnits: null,
       blockHeight: null, blockProgress: null, settledRound: null
     };
-    function lose(why) {
+    function lose(why, now) {
+      /* The overlay counts running time up between readings. Commit that time before the comparison point goes,
+         so the counter freezes at the loss instead of dropping back to the last reading. */
+      if (previous && previous.coreStatus === 'SPINNING' && previousAt !== null && Number.isFinite(now)) {
+        session.runningMs += runningStep(previousAt, now);
+      }
       /* Alerts re-baseline on recovery: the first good reading after a loss is treated like the first load. */
       previous = null;
       previousAt = null;
@@ -481,12 +494,12 @@
       reason: function () { return reason; },
       isSpinning: function () { return signal === 'live' && display.coreStatus === 'SPINNING'; },
       lastReadingAt: function () { return previousAt; },
-      fail: function (why) { return lose(why || 'request-failed'); },
+      fail: function (why, now) { return lose(why || 'request-failed', now); },
       ingest: function (json, now) {
         const reading = normalizeStatus(json);
         const verdict = freshnessVerdict(reading, now);
-        if (!verdict.ok) return lose(verdict.reason);
-        if (isFrozen(reading, now)) return lose('stale');
+        if (!verdict.ok) return lose(verdict.reason, now);
+        if (isFrozen(reading, now)) return lose('stale', now);
         Object.keys(display).forEach(function (key) {
           if (reading[key] !== null && reading[key] !== undefined) display[key] = reading[key];
         });
@@ -608,13 +621,13 @@
   const api = {
     STATUS_URL: STATUS_URL, ECONOMY_URL: ECONOMY_URL, POSITIONS: POSITIONS, LANGS: LANGS, PARTS: PARTS,
     DEFAULT_PARTS: DEFAULT_PARTS, ALERT_KINDS: ALERT_KINDS, PAGES: PAGES, THEMES: THEMES, SPEC: SPEC,
-    RECORD_MIN_MM: RECORD_MIN_MM, SESSION_MAX_AGE_MS: SESSION_MAX_AGE_MS,
+    SESSION_MAX_AGE_MS: SESSION_MAX_AGE_MS,
     artPalette: artPalette, strings: strings, formatNumber: formatNumber, formatPercent: formatPercent,
     formatDistance: formatDistance, formatSpeed: formatSpeed, formatDuration: formatDuration,
     formatSupply: formatSupply, alertText: alertText, describeAllowed: describeAllowed, specFor: specFor,
     parseParam: parseParam, parseParams: parseParams, buildQuery: buildQuery, alertEnabled: alertEnabled,
     normalizeStatus: normalizeStatus, clampProgress: clampProgress, animationSpeed: animationSpeed,
-    freshnessVerdict: freshnessVerdict, newSession: newSession, resolveSession: resolveSession,
+    freshnessVerdict: freshnessVerdict, nextPollDelay: nextPollDelay, newSession: newSession, resolveSession: resolveSession,
     createSessionStore: createSessionStore, applySessionReading: applySessionReading, sessionView: sessionView,
     createEngine: createEngine, createAlertQueue: createAlertQueue, createDemoFeed: createDemoFeed
   };

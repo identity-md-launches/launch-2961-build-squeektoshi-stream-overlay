@@ -1,10 +1,29 @@
 # Validation record
 
-**Completion: Incomplete.** The site is written in full, but nothing has been executed: no build, test, typecheck, probe, or browser check, and nothing has been committed. Treat it as unverified code until the commands below have been run.
+**Completion: Incomplete.** The site is written in full, but nothing has been executed by the worker that wrote it: no build, test, typecheck, probe, or browser check, in the original build or in the revision. Treat it as unverified code until the commands below have been run.
+
+## Revision: four review findings
+
+The reviewer reported these from Chromium and Node on another machine. Here, Bash and the browser failed with the same errors as before (see "Why nothing ran"), so **no finding was reproduced by running it and no fix has been executed.** Each was confirmed by tracing the code, and the new tests were traced by hand, which is not a test result.
+
+| Finding | Confirmed by reading | Fix | Regression test added (not run) |
+| --- | --- | --- | --- |
+| High: readings older than `staleAfterSeconds` accepted as live | `src/assets/core.js`, `freshnessVerdict`: age 180 s passed against limit 120 s + 300 s tolerance | Tolerance removed. `now - observedAt > limit` is stale; the `generatedAt - observedAt` check stays. A reading with no `observedAt` or `receivedAt` is aged by `generatedAt`, which the report did not ask for but is the same defect | "a self-consistent reading older than staleAfterSeconds...", "the age limit is exact..." |
+| Medium: response time added to the poll interval | `src/assets/overlay.js`, `pollStatus`: delay started after the request finished | New `nextPollDelay` in `core.js` subtracts elapsed time. The timeout is unchanged and always shorter than the interval, and the next request is still only scheduled after the last one ends, so requests do not overlap | "polling runs start to start..." |
+| Medium: running time jumps backwards on signal loss | `core.js`, `lose()`: cleared `previousAt` without saving the elapsed time the display was adding | `lose()` commits the elapsed time, capped at the existing 30 s step, when the last reading was `SPINNING`. `engine.fail` now takes the time. The display's cap is at most 20 s, so the committed value is never below what was shown | "running time freezes at a loss...", "a loss while resting..." |
+| Medium: records under 1 m never alert | `core.js`, `applySessionReading`: `RECORD_MIN_MM` gate | Gate and constant removed. A run must still be longer than the current record, so a zero-length run stays silent | "a record under one metre still fires..." |
+
+Behaviour changes to be aware of:
+
+- A streaming PC clock running ahead by more than `staleAfterSeconds` now shows SIGNAL LOST permanently. This is the requested trade-off, and it is documented in the README.
+- Very short runs can now fire a record alert early in a session.
+- WebFetch read `generatedAt` and `observedAt` under one second apart on the live API, against a 120-second limit, so normal operation should stay well inside it. That was one sample.
+
+`dist/assets/core.js` and `dist/assets/overlay.js` received the same edits as `src/` by hand, because `npm run build` could not run. Line counts match (636 and 343), and Grep shows the same lines for every changed symbol in both trees. That is not a byte comparison.
 
 ## Why nothing ran
 
-Every Bash call in this session, from the first to the last, returned the same error:
+Every Bash call in both sessions, from the first to the last, returned the same error:
 
 ```
 Sandbox is required but failed to initialize: Failed to create bridge sockets after 5 attempts. Restart to retry. Running it outside the sandbox (dangerouslyDisableSandbox) is not allowed either.
@@ -23,7 +42,7 @@ Installing it needs the shell. The browser tool's arbitrary-code method was not 
 - **Pages:** `index.html` (configurator), `overlay.html` (full scene), `widget.html` (corner widget). `dist/` is the export.
 - **Stack:** plain HTML, CSS and classic scripts instead of the usual Vite, React and TypeScript default. The brief asks for a pure static site, classic scripts also work from `file://`, and with no shell a bundler could not have run anyway.
 - **Choices the brief left open:**
-  - The record alert fires when a run ends, for a run of at least 1 m.
+  - The record alert fires when a run ends, for any run longer than the current record.
   - Recovery after a signal loss is silent.
   - A session expires after 12 hours without an update.
   - `reset=1` resets on every load; other tokens reset once.

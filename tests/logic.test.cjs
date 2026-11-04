@@ -146,6 +146,69 @@ test('a server response frozen past staleAfterSeconds counts as stale', () => {
   assert.equal(e.ingest(frozen, T0 + 121000).signal, 'lost');
 });
 
+test('a self-consistent reading older than staleAfterSeconds by the local clock is lost', () => {
+  const now = Date.parse('2026-11-04T12:00:00Z');
+  const old = '2026-11-04T11:57:00Z';
+  const cached = {
+    generatedAt: old,
+    measurement: { freshness: 'online', observedAt: old, staleAfterSeconds: 120, coreStatus: 'SPINNING', rpmMilli: 60000, distanceMm: 1000 }
+  };
+  const e = engine();
+  const result = e.ingest(cached, now);
+  assert.equal(result.signal, 'lost');
+  assert.equal(result.reason, 'stale');
+  assert.equal(e.isSpinning(), false);
+  assert.equal(e.display.coreStatus, null, 'a stale reading never reaches the screen');
+  assert.equal(e.session.baselineMm, null, 'a stale reading never sets the session baseline');
+});
+
+test('the age limit is exact, and every timestamp the payload offers is checked', () => {
+  const now = Date.parse('2026-11-04T12:00:00Z');
+  const at = (ms) => new Date(now - ms).toISOString();
+  const verdict = (json) => C.freshnessVerdict(C.normalizeStatus(json), now);
+  const shape = (generatedAt, observedAt) => ({ generatedAt, measurement: { freshness: 'online', observedAt, staleAfterSeconds: 120 } });
+  assert.equal(verdict(shape(at(120000), at(120000))).ok, true, 'exactly at the limit is still fresh');
+  assert.equal(verdict(shape(at(120001), at(120001))).ok, false, 'one millisecond past the limit is stale');
+  assert.equal(verdict(shape(at(0), at(121000))).ok, false, 'an old measurement in a new response');
+  assert.equal(verdict(shape(at(121000), undefined)).ok, false, 'no observedAt falls back to generatedAt');
+  assert.equal(verdict(shape(undefined, at(121000))).ok, false, 'no generatedAt still ages observedAt');
+  assert.equal(verdict(shape(undefined, undefined)).ok, true, 'no timestamps at all leaves only freshness');
+});
+
+test('polling runs start to start, whatever the response time', () => {
+  assert.equal(C.nextPollDelay(10, 1000, 3500), 7500, 'a 2.5 second response keeps a 10 second start interval');
+  assert.equal(C.nextPollDelay(5, 0, 4000), 1000, 'a timed-out request at poll=5');
+  assert.equal(C.nextPollDelay(10, 0, 9000), 1000, 'a timed-out request at poll=10');
+  assert.equal(C.nextPollDelay(7, 0, 0), 7000);
+  assert.equal(C.nextPollDelay(7, 0, 20000), 0, 'a late request never gives a negative delay');
+  assert.equal(C.nextPollDelay(7, 5000, 1000), 7000, 'a clock stepping backwards never stretches the interval');
+});
+
+test('running time freezes at a loss and resumes without going backwards', () => {
+  const e = engine();
+  e.ingest(payload(T0, { status: 'SPINNING', distance: 1000 }), T0);
+  assert.equal(e.fail('request-failed', T0 + 7000).signal, 'lost');
+  assert.equal(C.sessionView(e.session).runningMs, 7000, 'the time since the last reading is kept');
+  e.fail('request-failed', T0 + 14000);
+  e.ingest(payload(T0 + 21000, { freshness: 'offline', status: 'SPINNING' }), T0 + 21000);
+  assert.equal(C.sessionView(e.session).runningMs, 7000, 'frozen for the whole outage');
+  e.ingest(payload(T0 + 28000, { status: 'SPINNING', distance: 2000 }), T0 + 28000);
+  assert.equal(C.sessionView(e.session).runningMs, 7000, 'the outage itself is not counted');
+  e.ingest(payload(T0 + 35000, { status: 'SPINNING', distance: 3000 }), T0 + 35000);
+  assert.equal(C.sessionView(e.session).runningMs, 14000, 'counting resumes from the frozen value');
+});
+
+test('a loss while resting adds no running time, and a long gap is bounded', () => {
+  const idle = engine();
+  idle.ingest(payload(T0), T0);
+  idle.fail('request-failed', T0 + 7000);
+  assert.equal(C.sessionView(idle.session).runningMs, 0);
+  const asleepPc = engine();
+  asleepPc.ingest(payload(T0, { status: 'SPINNING' }), T0);
+  asleepPc.fail('request-failed', T0 + 3600000);
+  assert.equal(C.sessionView(asleepPc.session).runningMs, 30000);
+});
+
 test('recovery is silent and resumes by itself', () => {
   const e = engine();
   e.ingest(payload(T0), T0);
@@ -202,6 +265,17 @@ test('the distance record fires when a longer run ends, not for shorter runs', (
   assert.deepEqual(kinds(e.ingest(payload(T0 + 28000, { status: 'IDLE', distance: 6000 }), T0 + 28000)), ['sleep']);
   e.ingest(payload(T0 + 35000, { status: 'SPINNING', distance: 6000 }), T0 + 35000);
   assert.deepEqual(kinds(e.ingest(payload(T0 + 42000, { status: 'IDLE', distance: 13000 }), T0 + 42000)), ['sleep', 'record']);
+});
+
+test('a record under one metre still fires, and an empty run does not', () => {
+  const e = engine();
+  e.ingest(payload(T0, { distance: 1000 }), T0);
+  e.ingest(payload(T0 + 7000, { status: 'SPINNING', distance: 1000, rpmMilli: 5000 }), T0 + 7000);
+  const short = e.ingest(payload(T0 + 14000, { distance: 1500 }), T0 + 14000);
+  assert.deepEqual(short.events, [{ kind: 'sleep', value: null }, { kind: 'record', value: 500 }]);
+  assert.equal(C.sessionView(e.session).recordMm, 500);
+  e.ingest(payload(T0 + 21000, { status: 'SPINNING', distance: 1500 }), T0 + 21000);
+  assert.deepEqual(kinds(e.ingest(payload(T0 + 28000, { distance: 1500 }), T0 + 28000)), ['sleep']);
 });
 
 test('reset rules and storage failure', () => {

@@ -4,7 +4,7 @@ A static, fully client-side streamer tool. It adds Squeektoshi, the Squeekchain 
 
 No backend, no wallet, no signing, no keys, no accounts, no tracking. It only reads the public API.
 
-**Verification status:** nothing here has been executed yet. The shell was unavailable for the whole build, so the build, tests, typecheck, probe and browser checks did not run, and `dist/` was written by hand. See [VALIDATION.md](VALIDATION.md) and run the commands below before relying on it.
+**Verification status:** nothing here has been executed on the machine that wrote it. The shell was unavailable for the original build and again for the revision, so the build, tests, typecheck, probe and browser checks did not run, and `dist/` was edited by hand. See [VALIDATION.md](VALIDATION.md) and run the commands below before relying on it.
 
 ## Pages
 
@@ -67,7 +67,7 @@ Every value is validated. A bad value falls back to the default or clamps to the
 | `alertsec` | `5` | Whole number, `2` to `15` | Seconds each alert stays on screen |
 | `sound` | `0` | `1`, `0` | Web Audio chimes, generated in the browser. Off by default |
 | `volume` | `40` | Whole number, `0` to `100` | Chime volume |
-| `poll` | `7` | Whole number, `5` to `10` | Seconds between status requests |
+| `poll` | `7` | Whole number, `5` to `10` | Seconds from the start of one status request to the start of the next, response time included |
 | `reset` | empty | `1`, or a token of 1 to 32 letters, digits, `-`, `_` | `1` starts a new session on every load. Any other token starts one once, when the token changes |
 | `persist` | `1` | `1`, `0` | Keep the session in `localStorage` |
 | `motion` | `1` | `1`, `0` | `0` holds a still pose. `prefers-reduced-motion` does the same |
@@ -85,7 +85,7 @@ Alerts play one at a time with a 500 ms gap and never overlap. No alert fires on
 | Fell asleep | `measurement.coreStatus` goes from `SPINNING` to `IDLE` |
 | New block | `builder.anchor.blockHeight` increases |
 | Round confirmed | `builder.anchor.settledThroughRound` increases |
-| Distance record | A run ends longer than every earlier run this session, and is at least 1 m |
+| Distance record | A run ends longer than every earlier run this session, at any distance above zero |
 
 The record fires when a run ends rather than while it is under way, so it reports the finished distance and never reads as pressure to keep running. If more alerts of one kind wait in the queue, the newest value replaces the older one. Alerts use one slide and fade and do not flash or blink.
 
@@ -114,7 +114,7 @@ The live API places `freshness` and `staleAfterSeconds` under `measurement` and 
 ## Session counter
 
 - **Distance:** the current `distanceMm` minus the first reading. If the hardware counter restarts, the distance already run is kept.
-- **Running time:** time between consecutive fresh readings while `SPINNING`.
+- **Running time:** time between consecutive fresh readings while `SPINNING`. The display counts up between readings. If the signal is lost, the time up to that moment is kept (at most 30 seconds since the last reading), and the counter holds still until a good reading arrives.
 - **Longest run:** the largest distance of one continuous run (scene page only).
 - **Where it lives:** `localStorage`, per page. If storage is missing or refuses, it stays in memory for that load and the overlay carries on. A session not updated for 12 hours starts over.
 
@@ -124,7 +124,9 @@ The overlay shows **SIGNAL LOST** (**SİNYAL KAYIP** in Turkish) when any of the
 
 - A request fails, times out or returns a non-success status.
 - `measurement.freshness` is not `online`, or the payload is unusable.
-- The data is older than `staleAfterSeconds`. Age is `generatedAt - observedAt`, so a wrong clock on the streaming PC does not cause a false alarm. A reading more than 5 minutes past the limit by the local clock also counts, and so does a `generatedAt` that stops changing for longer than the limit.
+- The data is older than `staleAfterSeconds` by the streaming PC's clock. Age runs from `measurement.observedAt`, or from `receivedAt` and then `generatedAt` if that is missing. A `generatedAt` more than the limit after `observedAt` also counts, and so does a `generatedAt` that stops changing for longer than the limit.
+
+There is no allowance for clock error, so a streaming PC whose clock runs ahead by more than `staleAfterSeconds` shows SIGNAL LOST until its clock is corrected. Keep automatic time sync on.
 
 While lost, the last good values stay on screen, no alerts fire, the session distance and running time stop, and the wheel stops with a small no-signal icon. Polling continues, and the banner clears by itself on the next good reading. Before any data has arrived, values show as `–`. Raw error text is never displayed.
 

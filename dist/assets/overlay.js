@@ -265,10 +265,11 @@
       .finally(function () { clearTimeout(timer); });
   }
   function pollStatus() {
+    const startedAt = Date.now();
     fetchJson(C.STATUS_URL, Math.max(4000, (config.poll - 1) * 1000))
       .then(function (json) { handle(engine.ingest(json, Date.now())); })
-      .catch(function () { handle(engine.fail('request-failed')); })
-      .finally(function () { setTimeout(pollStatus, config.poll * 1000); });
+      .catch(function () { handle(engine.fail('request-failed', Date.now())); })
+      .finally(function () { setTimeout(pollStatus, C.nextPollDelay(config.poll, startedAt, Date.now())); });
   }
   /* A separate chain: this endpoint failing can only leave the supply figure at its last good value. */
   function pollEconomy() {
@@ -284,7 +285,7 @@
   let feed = null;
   function demoTick() {
     const payload = feed.next(Date.now());
-    handle(payload ? engine.ingest(payload, Date.now()) : engine.fail('demo-cut'));
+    handle(payload ? engine.ingest(payload, Date.now()) : engine.fail('demo-cut', Date.now()));
   }
   const SAMPLE_VALUES = { record: 4200, block: 8431, round: 1266, wake: null, sleep: null };
   function listenToConfigurator() {
