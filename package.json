@@ -1,0 +1,15 @@
+{
+  "name": "squeektoshi-stream-overlay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static OBS and Streamlabs browser source with Squeektoshi on the WHEELY9000 wheel.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/logic.test.cjs",
+    "typecheck": "npx --yes -p typescript@5.9.3 tsc -p tsconfig.json",
+    "preview": "node scripts/preview.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

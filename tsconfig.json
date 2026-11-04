@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "target": "ES2021",
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "module": "CommonJS",
+    "moduleResolution": "node10",
+    "strict": false,
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": ["src/assets/*.js", "types/globals.d.ts"]
+}

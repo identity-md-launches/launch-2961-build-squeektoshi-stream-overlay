@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Squeektoshi Stream Overlay: OBS and Streamlabs browser source</title>
+  <meta name="description" content="Add Squeektoshi, the Squeekchain hamster on the WHEELY9000 wheel, to your stream. Configure a transparent browser source and copy its URL.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Squeektoshi Stream Overlay">
+  <meta property="og:description" content="A transparent OBS and Streamlabs browser source with a pixel hamster, queued alerts and a stream session counter.">
+  <meta property="og:image" content="assets/og-image.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/configurator.css">
+</head>
+<body>
+  <a class="skip" href="#settings">Skip to settings</a>
+  <header class="top">
+    <h1 class="brand">Squeektoshi Stream Overlay</h1>
+    <a class="top-link" href="#setup">Setup guide</a>
+  </header>
+
+  <main class="layout">
+    <section class="stagearea" aria-label="Preview and overlay URL">
+      <div class="preview" id="preview-frame">
+        <iframe id="preview" title="Live preview of the overlay on a checkerboard that marks transparency" tabindex="-1"></iframe>
+      </div>
+
+      <div class="output">
+        <label class="field-label" for="url">Overlay URL for your browser source</label>
+        <textarea id="url" rows="3" readonly spellcheck="false" autocomplete="off"></textarea>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="copy">Copy overlay URL</button>
+          <a class="btn" id="open" target="_blank" rel="noopener">Open overlay</a>
+        </div>
+        <p class="hint" id="size-hint"></p>
+        <p class="status-line" id="copy-status" role="status"></p>
+      </div>
+
+      <section class="tests" aria-labelledby="tests-title">
+        <h2 id="tests-title">Test alerts in the preview</h2>
+        <div class="test-buttons" id="test-buttons">
+          <button type="button" class="btn btn-small" data-alert="wake">Test wake-up</button>
+          <button type="button" class="btn btn-small" data-alert="sleep">Test sleep</button>
+          <button type="button" class="btn btn-small" data-alert="block">Test block</button>
+          <button type="button" class="btn btn-small" data-alert="round">Test round</button>
+          <button type="button" class="btn btn-small" data-alert="record">Test record</button>
+          <button type="button" class="btn btn-small" id="cut" aria-pressed="false">Cut the signal</button>
+        </div>
+        <label class="check">
+          <input type="checkbox" id="preview-live">
+          <span>Preview live API data instead of simulated values</span>
+        </label>
+        <p class="hint" id="tests-hint"></p>
+      </section>
+    </section>
+
+    <form class="settings" id="settings" novalidate tabindex="-1">
+      <h2 class="visually-hidden">Overlay settings</h2>
+
+      <fieldset>
+        <legend>Overlay page</legend>
+        <div class="choices choices-2">
+          <label class="choice"><input type="radio" name="page" value="scene" checked><span>Full scene<small>1920 × 1080</small></span></label>
+          <label class="choice"><input type="radio" name="page" value="widget"><span>Corner widget<small>480 × 270</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Look</legend>
+        <div class="field">
+          <label class="field-label" for="theme">Theme</label>
+          <select id="theme" name="theme">
+            <option value="burrow">Burrow (warm dark)</option>
+            <option value="arcade">Arcade (navy and mint)</option>
+            <option value="paper">Paper (light)</option>
+            <option value="contrast">High contrast</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="lang">Language on stream</label>
+          <select id="lang" name="lang">
+            <option value="en">English</option>
+            <option value="tr">Türkçe</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="scale">Scale <output id="scale-out" for="scale"></output></label>
+          <input type="range" id="scale" name="scale" min="0.5" max="3" step="0.05">
+        </div>
+        <div class="field">
+          <span class="field-label" id="pos-label">Position</span>
+          <div class="pos-grid" role="radiogroup" aria-labelledby="pos-label">
+            <label class="choice"><input type="radio" name="pos" value="top-left"><span>Top left</span></label>
+            <label class="choice"><input type="radio" name="pos" value="top"><span>Top</span></label>
+            <label class="choice"><input type="radio" name="pos" value="top-right"><span>Top right</span></label>
+            <label class="choice"><input type="radio" name="pos" value="left"><span>Left</span></label>
+            <span class="pos-gap" aria-hidden="true"></span>
+            <label class="choice"><input type="radio" name="pos" value="right"><span>Right</span></label>
+            <label class="choice"><input type="radio" name="pos" value="bottom-left"><span>Bottom left</span></label>
+            <label class="choice"><input type="radio" name="pos" value="bottom"><span>Bottom</span></label>
+            <label class="choice"><input type="radio" name="pos" value="bottom-right"><span>Bottom right</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Parts to show</legend>
+        <label class="check"><input type="checkbox" name="part" value="hamster"><span>Hamster on the WHEELY9000</span></label>
+        <label class="check"><input type="checkbox" name="part" value="stats"><span>Stats</span></label>
+        <label class="check"><input type="checkbox" name="part" value="progress"><span>Block progress bar</span></label>
+        <label class="check"><input type="checkbox" name="part" value="session"><span>Session counter</span></label>
+        <label class="check"><input type="checkbox" name="part" value="alerts"><span>Alerts</span></label>
+        <label class="check"><input type="checkbox" name="part" value="supply"><span>SQK supply</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Alerts</legend>
+        <label class="check"><input type="checkbox" name="alert_wake"><span>Hamster woke up</span></label>
+        <label class="check"><input type="checkbox" name="alert_sleep"><span>Hamster fell asleep</span></label>
+        <label class="check"><input type="checkbox" name="alert_block"><span>New Squeek block completed</span></label>
+        <label class="check"><input type="checkbox" name="alert_round"><span>Settlement round confirmed</span></label>
+        <label class="check"><input type="checkbox" name="alert_record"><span>Session distance record</span></label>
+        <div class="field">
+          <label class="field-label" for="alertsec">Seconds each alert stays on screen</label>
+          <input type="number" id="alertsec" name="alertsec" inputmode="numeric" min="2" max="15" step="1" aria-describedby="alertsec-msg">
+          <p class="field-msg" id="alertsec-msg">Whole number from 2 to 15.</p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sound</legend>
+        <label class="check"><input type="checkbox" name="sound"><span>Play a generated chime with each alert</span></label>
+        <div class="field">
+          <label class="field-label" for="volume">Volume <output id="volume-out" for="volume"></output></label>
+          <input type="range" id="volume" name="volume" min="0" max="100" step="5">
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Data and session</legend>
+        <div class="field">
+          <label class="field-label" for="poll">Seconds between status checks</label>
+          <input type="number" id="poll" name="poll" inputmode="numeric" min="5" max="10" step="1" aria-describedby="poll-msg">
+          <p class="field-msg" id="poll-msg">Whole number from 5 to 10.</p>
+        </div>
+        <div class="field">
+          <label class="field-label" for="reset">Session reset token</label>
+          <div class="inline">
+            <input type="text" id="reset" name="reset" maxlength="32" autocomplete="off" spellcheck="false" placeholder="stream-42" aria-describedby="reset-msg">
+            <button type="button" class="btn" id="new-token">New token</button>
+          </div>
+          <p class="field-msg" id="reset-msg">A new word starts a new session once. 1 starts one on every load. Leave empty to keep counting.</p>
+        </div>
+        <label class="check"><input type="checkbox" name="persist"><span>Keep the session counter between reloads</span></label>
+        <label class="check"><input type="checkbox" name="motion"><span>Animate the hamster</span></label>
+        <label class="check"><input type="checkbox" name="demo"><span>Use simulated data in the overlay URL (demo)</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Check an existing URL</legend>
+        <div class="field">
+          <label class="field-label" for="paste">Overlay URL to check and load</label>
+          <div class="inline">
+            <input type="url" id="paste" autocomplete="off" spellcheck="false" placeholder="https://example.com/overlay.html?theme=arcade" aria-describedby="paste-msg">
+            <button type="button" class="btn" id="load">Check URL</button>
+          </div>
+          <div class="field-msg" id="paste-msg" role="status"></div>
+        </div>
+      </fieldset>
+    </form>
+  </main>
+
+  <section class="setup" id="setup" aria-labelledby="setup-title">
+    <h2 id="setup-title">Add the overlay to your streaming app</h2>
+    <div class="setup-cols">
+      <div>
+        <h3>OBS Studio</h3>
+        <ol>
+          <li>Copy the overlay URL above.</li>
+          <li>In Sources, select + and choose Browser.</li>
+          <li>Paste the URL into the URL field.</li>
+          <li>Set the width and height to the size shown under the URL.</li>
+          <li>Leave Custom CSS empty or keep its default. The page is already transparent.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Streamlabs Desktop</h3>
+        <ol>
+          <li>Select Copy overlay URL.</li>
+          <li>In Sources, select + and choose Browser Source.</li>
+          <li>Paste the URL and set the width and height shown under the URL.</li>
+          <li>Save, then drag the source to where you want it in the scene.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="note">The overlay only reads the public Squeekchain status API. No accounts, keys, wallets or tracking. Resting is celebrated as much as running.</p>
+  </section>
+
+  <script src="assets/core.js"></script>
+  <script src="assets/configurator.js"></script>
+</body>
+</html>

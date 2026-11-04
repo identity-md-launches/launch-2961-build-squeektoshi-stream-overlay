@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" shape-rendering="crispEdges">
+  <rect width="1200" height="630" fill="#1c130c"/>
+  <g transform="translate(90 120) scale(24)">
+    <path fill="#3a2a1e" d="M5 0h6v1h2v1h1v2h1v2h1v4h-1v2h-1v2h-1v1h-2v1H5v-1H3v-1H2v-2H1v-2H0V6h1V4h1V2h1V1h2z"/>
+    <path fill="#f4f0e6" d="M5 0h6v1H5zM3 1h2v1H3zM11 1h2v1h-2zM2 2h1v2H2zM13 2h1v2h-1zM1 4h1v2H1zM14 4h1v2h-1zM0 6h1v4H0zM15 6h1v4h-1zM1 10h1v2H1zM14 10h1v2h-1zM2 12h1v2H2zM13 12h1v2h-1zM3 14h2v1H3zM11 14h2v1h-2zM5 15h6v1H5z"/>
+    <path fill="#e0a15a" d="M6 8h5v1H6zM5 9h7v1H5zM5 10h7v1H5zM5 11h7v1H5zM6 12h5v1H6z"/>
+    <path fill="#f08f94" d="M9 7h1v1H9zM11 7h1v1h-1zM12 11h1v1h-1z"/>
+    <path fill="#14090a" d="M10 9h1v1h-1z"/>
+    <path fill="#fff0d6" d="M7 11h4v1H7z"/>
+  </g>
+  <text x="540" y="290" fill="#fdf3df" font-family="system-ui, sans-serif" font-size="64" font-weight="700">Squeektoshi</text>
+  <text x="540" y="370" fill="#fdf3df" font-family="system-ui, sans-serif" font-size="64" font-weight="700">Stream Overlay</text>
+  <text x="540" y="440" fill="#d8c4a5" font-family="system-ui, sans-serif" font-size="32">A browser source for OBS and Streamlabs</text>
+</svg>

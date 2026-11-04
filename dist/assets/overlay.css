@@ -1,0 +1,309 @@
+/* Overlay pages. The page itself must stay fully transparent: only the rig and the alert paint pixels.
+   Theme colours are set on :root by overlay.js from THEMES in core.js. */
+:root {
+  --scale: 1;
+  --inset: 48px;
+  --gap: 24px;
+  --px: 4px;
+  --art-w: 480px;
+  --art-h: 360px;
+  --col-w: 420px;
+  --pad: 20px;
+  --t-label: 16px;
+  --t-value: 28px;
+  --t-status: 22px;
+  --t-alert-title: 36px;
+  --t-alert-body: 24px;
+  --alert-icon: 72px;
+  --alert-w: 820px;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "DejaVu Sans", sans-serif;
+  --font-data: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+body {
+  position: relative;
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body[data-page="widget"] {
+  --inset: 12px;
+  --gap: 12px;
+  --px: 2px;
+  --art-w: 192px;
+  --art-h: 168px;
+  --col-w: 240px;
+  --pad: 10px;
+  --t-label: 12px;
+  --t-value: 16px;
+  --t-status: 13px;
+  --t-alert-title: 18px;
+  --t-alert-body: 14px;
+  --alert-icon: 36px;
+  --alert-w: 440px;
+}
+p,
+dl,
+dd {
+  margin: 0;
+}
+[hidden] {
+  display: none !important;
+}
+
+/* Position: --tx and --ty centre the edge positions; the scale grows away from the chosen edge. */
+.rig {
+  position: absolute;
+  display: flex;
+  gap: var(--gap);
+  align-items: flex-end;
+  transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale));
+  transform-origin: var(--origin, left bottom);
+}
+body[data-pos="top-left"] .rig { top: var(--inset); left: var(--inset); align-items: flex-start; --origin: left top; }
+body[data-pos="top"] .rig { top: var(--inset); left: 50%; align-items: flex-start; --tx: -50%; --origin: center top; }
+body[data-pos="top-right"] .rig { top: var(--inset); right: var(--inset); align-items: flex-start; flex-direction: row-reverse; --origin: right top; }
+body[data-pos="left"] .rig { top: 50%; left: var(--inset); align-items: center; --ty: -50%; --origin: left center; }
+body[data-pos="right"] .rig { top: 50%; right: var(--inset); align-items: center; flex-direction: row-reverse; --ty: -50%; --origin: right center; }
+body[data-pos="bottom-left"] .rig { bottom: var(--inset); left: var(--inset); --origin: left bottom; }
+body[data-pos="bottom"] .rig { bottom: var(--inset); left: 50%; --tx: -50%; --origin: center bottom; }
+body[data-pos="bottom-right"] .rig { bottom: var(--inset); right: var(--inset); flex-direction: row-reverse; --origin: right bottom; }
+
+.art {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: var(--art-w);
+}
+.art-canvas {
+  display: block;
+  width: var(--art-w);
+  height: var(--art-h);
+  image-rendering: pixelated;
+}
+.status {
+  padding: 4px 12px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: var(--t-status);
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.status[data-mode="spinning"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.panel .status {
+  padding: 0 0 8px;
+  text-align: start;
+}
+.panel .status[data-mode="spinning"] {
+  background: transparent;
+  color: var(--text);
+}
+
+.col {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: var(--col-w);
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad);
+  padding: var(--pad);
+  background: var(--panel);
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--edge),
+    0 var(--px) 0 0 var(--edge),
+    calc(var(--px) * -1) 0 0 0 var(--edge),
+    var(--px) 0 0 0 var(--edge);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+}
+.stats-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+.stats-session {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+body[data-page="widget"] .stats {
+  gap: 4px 10px;
+}
+body[data-page="widget"] .stats-session {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.stat {
+  min-width: 0;
+}
+.label,
+.session-title {
+  display: block;
+  color: var(--muted);
+  font-size: var(--t-label);
+  line-height: 1.3;
+}
+.session-title {
+  margin-block-end: 4px;
+  color: var(--text);
+  font-weight: 600;
+}
+.value {
+  display: block;
+  color: var(--text);
+  font-family: var(--font-data);
+  font-size: var(--t-value);
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.stats-session .value {
+  font-size: calc(var(--t-value) * 0.8);
+}
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-block-end: 6px;
+}
+.progress-row .value {
+  font-size: var(--t-status);
+}
+.bar {
+  position: relative;
+  height: calc(var(--px) * 4);
+  background: var(--track);
+  overflow: hidden;
+}
+.bar-fill {
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+  transition: width 400ms ease-out;
+}
+/* Stepped segments so the bar matches the pixel art. */
+.bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to right, transparent 0 calc(5% - var(--px) / 2), var(--panel) calc(5% - var(--px) / 2) 5%);
+  pointer-events: none;
+}
+
+.signal {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px var(--pad);
+  background: var(--lost-bg);
+  color: var(--lost-text);
+}
+.signal-title {
+  font-size: var(--t-status);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.signal-text {
+  font-size: var(--t-label);
+  line-height: 1.3;
+}
+.demo-tag {
+  align-self: flex-start;
+  padding: 2px 8px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: var(--t-label);
+  line-height: 1.3;
+}
+
+/* Alerts: a single slide and fade per alert. Nothing blinks or repeats. */
+.alert {
+  position: absolute;
+  top: var(--inset);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--pad) * 0.8);
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(var(--alert-w), calc((100vw - var(--inset) * 2) / var(--scale)));
+  padding: var(--pad) calc(var(--pad) * 1.4);
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--edge),
+    0 var(--px) 0 0 var(--edge),
+    calc(var(--px) * -1) 0 0 0 var(--edge),
+    var(--px) 0 0 0 var(--edge);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -16px) scale(var(--scale));
+  transform-origin: center top;
+  transition-property: opacity, transform, visibility;
+  transition-duration: 240ms;
+  transition-timing-function: ease-out;
+}
+.alert.is-on {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) scale(var(--scale));
+}
+body[data-pos^="top"] .alert {
+  top: auto;
+  bottom: var(--inset);
+  transform: translate(-50%, 16px) scale(var(--scale));
+  transform-origin: center bottom;
+}
+body[data-pos^="top"] .alert.is-on {
+  transform: translate(-50%, 0) scale(var(--scale));
+}
+.alert-icon {
+  flex: none;
+  width: var(--alert-icon);
+  height: var(--alert-icon);
+  image-rendering: pixelated;
+}
+.alert-words {
+  min-width: 0;
+}
+.alert-title {
+  font-size: var(--t-alert-title);
+  font-weight: 700;
+  line-height: 1.15;
+}
+.alert-body {
+  margin-block-start: 4px;
+  font-size: var(--t-alert-body);
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reduced motion or motion=0: the alert only fades, the art holds a still pose. */
+.is-still .bar-fill {
+  transition: none;
+}
+.is-still .alert,
+.is-still .alert.is-on,
+body[data-pos^="top"].is-still .alert,
+body[data-pos^="top"].is-still .alert.is-on {
+  transform: translate(-50%, 0) scale(var(--scale));
+  transition-property: opacity, visibility;
+}
