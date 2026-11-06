@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "baseCommit": "44e6127595d7e248785eb195fd0cb4d7bc14be24",
+  "exactlyPreserved": [
+    "BODY",
+    "LEGS",
+    "SLEEPING",
+    "ALERT_ICONS"
+  ],
+  "changes": "Moth period now 500ms; global export fallback modernized. Original sprite pixels unchanged."
+}

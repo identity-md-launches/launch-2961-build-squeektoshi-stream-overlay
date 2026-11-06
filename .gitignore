@@ -1,0 +1,9 @@
+# Explicit budgets and required-artifact exceptions: PATH_BUDGET.md.
+**/node_modules/
+**/.cache/
+**/npm-cache/
+/test/scratch/
+!/dist/
+!/dist/**
+!/artifacts/
+!/artifacts/**

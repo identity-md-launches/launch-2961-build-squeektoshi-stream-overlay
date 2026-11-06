@@ -8,8 +8,11 @@
   const ECONOMY_URL = 'https://api.squeekchain.com/v1/economy/state';
   const POSITIONS = ['top-left', 'top', 'top-right', 'left', 'right', 'bottom-left', 'bottom', 'bottom-right'];
   const LANGS = ['en', 'tr'];
+  /** @type {import('../../types/model').Part[]} */
   const PARTS = ['hamster', 'stats', 'progress', 'session', 'alerts', 'supply'];
+  /** @type {import('../../types/model').Part[]} */
   const DEFAULT_PARTS = ['hamster', 'stats', 'progress', 'session', 'alerts'];
+  /** @type {import('../../types/model').Kind[]} */
   const ALERT_KINDS = ['wake', 'sleep', 'block', 'round', 'record'];
   const PAGES = {
     scene: { file: 'overlay.html', width: 1920, height: 1080, label: 'Full scene' },
@@ -86,7 +89,7 @@
   const STRINGS = {
     en: {
       running: 'Running', resting: 'Resting', connecting: 'Connecting', unknown: 'Checking',
-      healthyRest: 'Healthy rest', rpm: 'RPM', speed: 'Speed', distance: 'Total distance', work: 'Work units',
+      healthyRest: 'Healthy rest', live: 'Live', lost: 'Lost', lastKnown: 'Last-known values', rpm: 'RPM', speed: 'Speed', distance: 'Total distance', work: 'Work units',
       block: 'Squeek block', round: 'Settled round', supply: 'Supply', progress: 'Block progress',
       session: 'This stream', sessionDistance: 'Distance', sessionTime: 'Running time', sessionRecord: 'Longest run',
       lostTitle: 'SIGNAL LOST', lostText: 'Showing the last good values. Reconnecting by itself.', demo: 'Demo data',
@@ -100,7 +103,7 @@
     },
     tr: {
       running: 'Koşuyor', resting: 'Dinleniyor', connecting: 'Bağlanıyor', unknown: 'Kontrol ediliyor',
-      healthyRest: 'Sağlıklı uyku', rpm: 'RPM', speed: 'Hız', distance: 'Toplam mesafe', work: 'İş birimi',
+      healthyRest: 'Sağlıklı uyku', live: 'Canlı', lost: 'Bağlantı yok', lastKnown: 'Son bilinen değerler', rpm: 'RPM', speed: 'Hız', distance: 'Toplam mesafe', work: 'İş birimi',
       block: 'Squeek bloğu', round: 'Uzlaşılan tur', supply: 'Arz', progress: 'Blok ilerlemesi',
       session: 'Bu yayın', sessionDistance: 'Mesafe', sessionTime: 'Koşu süresi', sessionRecord: 'En uzun koşu',
       lostTitle: 'SİNYAL KAYIP', lostText: 'Son geçerli değerler ekranda. Kendiliğinden yeniden bağlanıyor.', demo: 'Demo verisi',
@@ -238,7 +241,7 @@
         const tokens = lower.split(',').map(function (t) { return t.trim(); }).filter(Boolean);
         const valid = PARTS.filter(function (p) { return tokens.indexOf(p) >= 0; });
         if (valid.length === 0) return bad(fallback);
-        const hasUnknown = tokens.some(function (t) { return PARTS.indexOf(t) < 0; });
+        const hasUnknown = tokens.some(function (t) { return !PARTS.some(p => p === t); });
         return hasUnknown ? bad(valid) : { value: valid, issue: null };
       }
       default:
@@ -249,7 +252,7 @@
   function parseParams(search, page) {
     const pageKey = page === 'widget' ? 'widget' : 'scene';
     const params = new URLSearchParams(search || '');
-    const config = {};
+    const config = /** @type {import('../../types/model').Config} */ ({});
     const issues = [];
     SPEC.forEach(function (spec) {
       const raw = params.has(spec.key) ? params.get(spec.key) : null;
@@ -296,7 +299,7 @@
   }
   function toCount(v) {
     const n = toNumber(v);
-    return n !== null && n >= 0 ? n : null;
+    return n !== null && n >= 0 && n <= Number.MAX_SAFE_INTEGER ? n : null;
   }
   function toTime(v) {
     if (typeof v !== 'string') return null;
@@ -317,6 +320,7 @@
     const staleRaw = toNumber(m.staleAfterSeconds !== undefined ? m.staleAfterSeconds : json.staleAfterSeconds);
     return {
       coreStatus: status,
+      counterEpoch: (typeof m.counterEpoch === 'string' || typeof m.counterEpoch === 'number') ? String(m.counterEpoch).slice(0, 128) : null,
       rpm: (function () { const r = toCount(m.rpmMilli); return r === null ? null : r / 1000; })(),
       speedMmPerSecond: toCount(m.speedMmPerSecond),
       distanceMm: toCount(m.distanceMm),
@@ -360,22 +364,24 @@
   function newSession(token) {
     return {
       v: 1, token: token || '', baselineMm: null, carryMm: 0, lastMm: null,
-      runningMs: 0, recordMm: 0, runStartMm: null, savedAt: 0
+      runningMs: 0, recordMm: 0, runStartMm: null, savedAt: 0, counterEpoch: null, gaps: 0, startedAt: 0
     };
   }
   function sanitizeSession(stored) {
     if (!isObject(stored) || stored.v !== 1) return null;
-    const num = function (v, fallback) { return typeof v === 'number' && Number.isFinite(v) ? v : fallback; };
+    const num = function (v, fallback) { return typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= Number.MAX_SAFE_INTEGER ? v : fallback; };
     return {
       v: 1,
-      token: typeof stored.token === 'string' ? stored.token : '',
+      token: typeof stored.token === 'string' && (stored.token === '' || TOKEN_RE.test(stored.token)) ? stored.token : '',
       baselineMm: num(stored.baselineMm, null),
       carryMm: Math.max(0, num(stored.carryMm, 0)),
       lastMm: num(stored.lastMm, null),
       runningMs: Math.max(0, num(stored.runningMs, 0)),
       recordMm: Math.max(0, num(stored.recordMm, 0)),
       runStartMm: num(stored.runStartMm, null),
-      savedAt: num(stored.savedAt, 0)
+      savedAt: num(stored.savedAt, 0),
+      counterEpoch: typeof stored.counterEpoch === 'string' ? stored.counterEpoch.slice(0, 128) : null,
+      gaps: Math.max(0, num(stored.gaps, 0)), startedAt: num(stored.startedAt, 0)
     };
   }
   /* reset=1 starts a new baseline on every load. Any other token starts one once, when the token changes. */
@@ -411,37 +417,39 @@
   function runningStep(previousAt, now) {
     return Math.min(MAX_RUNNING_STEP_MS, Math.max(0, now - previousAt));
   }
-  /* Applies one fresh reading. Returns the distance of a run that just ended as a new record, else null. */
+  // Seal only observed distance; no continuous record crosses an outage or counter epoch.
+  function breakContinuity(session) {
+    if (session.runStartMm !== null && session.lastMm !== null) {
+      session.recordMm = Math.max(session.recordMm, session.lastMm - session.runStartMm);
+    }
+    if (session.baselineMm !== null && session.lastMm !== null) {
+      session.carryMm += Math.max(0, session.lastMm - session.baselineMm);
+    }
+    session.runStartMm = null;
+    session.baselineMm = null;
+    session.lastMm = null;
+  }
   function applySessionReading(session, reading, previousStatus, previousAt, now) {
     const d = reading.distanceMm;
+    const changedEpoch = reading.counterEpoch !== null && session.counterEpoch !== null &&
+      reading.counterEpoch !== session.counterEpoch;
+    const decreased = d !== null && session.lastMm !== null && d < session.lastMm;
+    if (changedEpoch || decreased) breakContinuity(session);
+    if (reading.counterEpoch !== null) session.counterEpoch = reading.counterEpoch;
     if (d !== null) {
-      if (session.baselineMm === null || session.lastMm === null) {
-        session.baselineMm = d;
-        session.lastMm = d;
-      } else if (d < session.lastMm) {
-        /* The hardware counter restarted: keep what was run and measure from the new counter. */
-        session.carryMm += session.lastMm - session.baselineMm;
-        if (session.runStartMm !== null) session.runStartMm = d - (session.lastMm - session.runStartMm);
-        session.baselineMm = d;
-        session.lastMm = d;
-      } else {
-        session.lastMm = d;
-      }
+      if (session.baselineMm === null) session.baselineMm = d;
+      session.lastMm = d;
     }
     if (previousStatus === 'SPINNING' && previousAt !== null) {
       session.runningMs += runningStep(previousAt, now);
     }
-    if (reading.coreStatus === 'SPINNING' && session.runStartMm === null && session.lastMm !== null) {
-      session.runStartMm = session.lastMm;
-    }
+    if (reading.coreStatus === 'SPINNING' && session.runStartMm === null && d !== null) session.runStartMm = d;
     session.savedAt = now;
+    if (!session.startedAt) session.startedAt = now;
     if (reading.coreStatus === 'IDLE' && session.runStartMm !== null) {
-      const run = session.lastMm === null ? 0 : session.lastMm - session.runStartMm;
+      const run = session.lastMm === null ? 0 : Math.max(0, session.lastMm - session.runStartMm);
       session.runStartMm = null;
-      if (run > session.recordMm) {
-        session.recordMm = run;
-        return run;
-      }
+      if (run > session.recordMm) { session.recordMm = run; return run; }
     }
     return null;
   }
@@ -459,6 +467,8 @@
     let previousAt = null;
     let signal = 'connecting';
     let reason = null;
+    let lastSuccess = null;
+    let currentReading = null;
     let lastGenerated = null;
     let lastGeneratedChange = 0;
     const display = {
@@ -472,6 +482,8 @@
         session.runningMs += runningStep(previousAt, now);
       }
       /* Alerts re-baseline on recovery: the first good reading after a loss is treated like the first load. */
+      if (signal === 'live') { breakContinuity(session); session.gaps += 1; }
+      session.savedAt = Number.isFinite(now) ? now : session.savedAt;
       previous = null;
       previousAt = null;
       signal = 'lost';
@@ -494,6 +506,8 @@
       reason: function () { return reason; },
       isSpinning: function () { return signal === 'live' && display.coreStatus === 'SPINNING'; },
       lastReadingAt: function () { return previousAt; },
+      lastSuccess: function () { return lastSuccess; },
+      reading: function () { return currentReading; },
       fail: function (why, now) { return lose(why || 'request-failed', now); },
       ingest: function (json, now) {
         const reading = normalizeStatus(json);
@@ -503,6 +517,8 @@
         Object.keys(display).forEach(function (key) {
           if (reading[key] !== null && reading[key] !== undefined) display[key] = reading[key];
         });
+        currentReading = reading;
+        lastSuccess = now;
         const record = applySessionReading(session, reading, previous ? previous.coreStatus : null, previousAt, now);
         const events = [];
         if (previous) {
@@ -556,7 +572,8 @@
         }
         return active;
       },
-      pendingCount: function () { return pending.length; }
+      pendingCount: function () { return pending.length; },
+      clear: function () { pending.length = 0; active = null; until = 0; nextAt = 0; }
     };
   }
 
@@ -629,8 +646,8 @@
     normalizeStatus: normalizeStatus, clampProgress: clampProgress, animationSpeed: animationSpeed,
     freshnessVerdict: freshnessVerdict, nextPollDelay: nextPollDelay, newSession: newSession, resolveSession: resolveSession,
     createSessionStore: createSessionStore, applySessionReading: applySessionReading, sessionView: sessionView,
-    createEngine: createEngine, createAlertQueue: createAlertQueue, createDemoFeed: createDemoFeed
+    breakContinuity: breakContinuity, createEngine: createEngine, createAlertQueue: createAlertQueue, createDemoFeed: createDemoFeed
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SqueekCore = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this);
+})(globalThis);

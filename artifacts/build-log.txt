@@ -1,0 +1,17 @@
+dist/assets/art.js
+dist/assets/configurator.css
+dist/assets/configurator.js
+dist/assets/core.js
+dist/assets/favicon.svg
+dist/assets/og-image.svg
+dist/assets/original-project.png
+dist/assets/overlay.css
+dist/assets/overlay.js
+dist/assets/settings.js
+dist/assets/storage.js
+dist/build.json
+dist/index.html
+dist/overlay.html
+dist/widget.html
+Built 15 files, 154110 bytes.
+{"version": "2.0.0", "buildId": "705ce9dc65335d76b04bd6ea4ca55a275499620d3fb41c5d3b2cbd75ed0787f8", "sourceZipBytes": 123857, "staticZipBytes": 56086}

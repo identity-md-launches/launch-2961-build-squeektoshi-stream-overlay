@@ -1,0 +1,43 @@
+{
+  "at": "2026-11-06T12:53:05.432Z",
+  "transport": "Python urllib fetch of real HTTPS endpoints, forwarded unchanged via a test-only Playwright route; this does not certify direct Chromium network access",
+  "observations": [
+    {
+      "url": "https://api.squeekchain.com/v1/status",
+      "status": 200,
+      "cors": "*",
+      "generatedAt": "2026-11-06T12:52:02.146Z",
+      "observedAt": "2026-11-06T12:52:00.536Z"
+    },
+    {
+      "url": "https://api.squeekchain.com/v1/economy/state",
+      "status": 200,
+      "cors": "*",
+      "generatedAt": "2026-11-06T12:52:48.659Z"
+    },
+    {
+      "url": "https://api.squeekchain.com/v1/status",
+      "status": 200,
+      "cors": "*",
+      "generatedAt": "2026-11-06T12:52:02.146Z",
+      "observedAt": "2026-11-06T12:52:00.536Z"
+    },
+    {
+      "url": "https://api.squeekchain.com/v1/status",
+      "status": 200,
+      "cors": "*",
+      "generatedAt": "2026-11-06T12:53:01.120Z",
+      "observedAt": "2026-11-06T12:53:00.519Z"
+    }
+  ],
+  "errors": [],
+  "status": "Live · Resting · Healthy rest",
+  "paint": {
+    "pixels": 8265,
+    "width": 320,
+    "height": 240,
+    "visible": true
+  },
+  "text": "Live · Resting · Healthy rest\n\nRPM\n0.0\nSpeed\n0.00 m/s\nTotal distance\n0.0 m\nWork units\n11,048\nSqueek block\n1,140\nSettled round\n389\nBlock progress\n66.3%\n\nThis stream\n\nDistance\n0.0 m\nRunning time\n00:00\nLongest run\n0.0 m\nSupply\n214.2M SQK",
+  "passed": true
+}

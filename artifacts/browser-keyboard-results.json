@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "flow": [
+    "keyboard choose hamster",
+    "focus survives rebuild",
+    "Tab to running",
+    "sleeping",
+    "copy URL"
+  ],
+  "feedback": "OBS URL copied. Apply the URL and dimensions in your source. Setup time: 0s."
+}

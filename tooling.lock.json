@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "scope": "development only; zero production dependencies",
+  "node": ">=20",
+  "packages": [
+    {
+      "name": "typescript",
+      "version": "5.9.3",
+      "tarball": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+      "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="
+    },
+    {
+      "name": "playwright",
+      "version": "1.64.0-alpha-1789764292000",
+      "tarball": "https://registry.npmjs.org/playwright/-/playwright-1.64.0-alpha-1789764292000.tgz",
+      "integrity": "sha512-3Ngs4ERGdC912uW3srEDtNVey4u1wSaQ/EFcKhxMpz0by0K6nidaJgM087pLpJc1osytiVnL7ack5gvgPArPNw=="
+    },
+    {
+      "name": "playwright-core",
+      "version": "1.64.0-alpha-1789764292000",
+      "tarball": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.64.0-alpha-1789764292000.tgz",
+      "integrity": "sha512-ZgRaybFv4rRy7QMGnYprEGFdNJnvapNqcaER2w96bDQA+40BWIle1el1Yh9KHD3E6XYmieMB+r+UxFTCauTGGQ=="
+    }
+  ]
+}

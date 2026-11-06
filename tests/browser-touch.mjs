@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {writeFile} from 'node:fs/promises';
+import {start} from './browser-support.mjs';
+const env=await start(),context=await env.browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true}),page=await context.newPage();
+try{
+ await page.goto(env.base);await page.locator('#quick-hamster').tap();await page.locator('#arrange').evaluate(n=>n.open=true);await page.locator('#layout').selectOption('custom');await page.locator('#edit-layout').check();
+ await page.locator('#handle-hamster').scrollIntoViewIfNeeded();const rect=await page.locator('#handle-hamster').boundingBox();const before=await page.locator('#url').inputValue();const client=await context.newCDPSession(page);const point={x:Math.round(rect.x+20),y:Math.round(rect.y+12),id:1};
+ await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});for(let i=1;i<=10;i++){await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{...point,x:point.x+6*i,y:point.y+3*i}]});await page.waitForTimeout(20);}await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(350);
+ const after=await page.locator('#url').inputValue();assert.notEqual(after,before);const box=await page.evaluate(()=>SqueekSettings.readURL(document.getElementById('url').value,location.href).presentation.boxes.hamster);assert.ok(box.x>=0&&box.x<=100&&box.y>=0&&box.y<=100);assert.notEqual(box.y,48);await page.locator('#undo').scrollIntoViewIfNeeded();const undo=await page.locator('#undo').boundingBox();await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:undo.x+undo.width/2,y:undo.y+undo.height/2,id:1}]});await page.waitForTimeout(50);await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForFunction(value=>document.getElementById('url').value===value,before);assert.equal(await page.locator('#url').inputValue(),before);
+ await writeFile('artifacts/browser-touch-results.json',JSON.stringify({passed:true,emulatedTouchDrag:true,oneUndoRestores:true,box,physicalDevice:false},null,2));console.log('Touch drag + one undo passed');
+}catch(e){await writeFile('artifacts/browser-touch-results.json',JSON.stringify({passed:false,error:e.message},null,2));console.log(e.message);process.exitCode=1;}finally{await env.close();}

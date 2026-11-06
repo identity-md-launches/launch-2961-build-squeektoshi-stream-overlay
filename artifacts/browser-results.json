@@ -1,0 +1,200 @@
+{
+  "at": "2026-11-06T13:35:39.306Z",
+  "browser": "154.0.8037.0",
+  "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src https://api.squeekchain.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'",
+  "passed": 21,
+  "failed": 0,
+  "results": [
+    {
+      "name": "painted responsive configurator, primary action visible at 390, relative assets",
+      "passed": true,
+      "ms": 2560,
+      "detail": [
+        {
+          "width": 320,
+          "pixels": 8265,
+          "height": 89.375,
+          "visible": true,
+          "scroll": 320,
+          "copy": 660.78125,
+          "frames": 0
+        },
+        {
+          "width": 390,
+          "pixels": 8265,
+          "height": 111.25,
+          "visible": true,
+          "scroll": 390,
+          "copy": 639.78125,
+          "frames": 0
+        },
+        {
+          "width": 768,
+          "pixels": 8265,
+          "height": 116.875,
+          "visible": true,
+          "scroll": 768,
+          "copy": 660.78125,
+          "frames": 0
+        },
+        {
+          "width": 1440,
+          "pixels": 8265,
+          "height": 260.5555419921875,
+          "visible": true,
+          "scroll": 1440,
+          "copy": 837.703125,
+          "frames": 0
+        }
+      ]
+    },
+    {
+      "name": "first-use: choose hamster, run, sleep, copy URL + dimensions under 60 seconds",
+      "passed": true,
+      "ms": 633,
+      "detail": {
+        "durationMs": 564
+      }
+    },
+    {
+      "name": "demo cut/restore changes pose, clears alert, no API or session writes",
+      "passed": true,
+      "ms": 570
+    },
+    {
+      "name": "profiles create/save/copy/rename/delete/undo and valid draft restore",
+      "passed": true,
+      "ms": 542
+    },
+    {
+      "name": "import/export and URL check are atomic, portable and preserve settings",
+      "passed": true,
+      "ms": 320
+    },
+    {
+      "name": "independent EN/TR interface and stream language, all five formats",
+      "passed": true,
+      "ms": 214
+    },
+    {
+      "name": "20 undo/redo steps and visual edits preserve ID",
+      "passed": true,
+      "ms": 2858
+    },
+    {
+      "name": "custom layout numeric and keyboard controls, lock and reset",
+      "passed": true,
+      "ms": 551
+    },
+    {
+      "name": "all-hidden state is explicit; preview backgrounds do not change URL",
+      "passed": true,
+      "ms": 230
+    },
+    {
+      "name": "keyboard focus and 200% CSS zoom reflow",
+      "passed": true,
+      "ms": 459,
+      "detail": {
+        "width": 768,
+        "scroll": 768,
+        "focus": "DIV",
+        "outline": "solid",
+        "limitation": "CSS 200% zoom, not native browser zoom or a physical touch device"
+      }
+    },
+    {
+      "name": "320 combinations: formats × themes × languages × positions, painted and bounded",
+      "passed": true,
+      "ms": 3415,
+      "detail": {
+        "count": 320,
+        "failures": []
+      }
+    },
+    {
+      "name": "all 5 alerts sequential, gap, long Turkish widget text stays bounded",
+      "passed": true,
+      "ms": 14706,
+      "detail": {
+        "alerts": 5,
+        "gaps": 5
+      }
+    },
+    {
+      "name": "audio master-off silence, three generated tones, loss cancellation",
+      "passed": true,
+      "ms": 111,
+      "detail": {
+        "oscillatorStarts": 9,
+        "tones": 3
+      }
+    },
+    {
+      "name": "motion-off stops draw loop, reduced-motion stops it, 15/30 FPS bounded",
+      "passed": true,
+      "ms": 4590,
+      "detail": {
+        "draws15": 14,
+        "draws30": 25
+      }
+    },
+    {
+      "name": "25 remounts; destroy cancels timers, RAF, observers and delayed fetch/finally",
+      "passed": true,
+      "ms": 6743,
+      "detail": {
+        "remounts": 25,
+        "delayedRequests": 1
+      }
+    },
+    {
+      "name": "live polling outage/recovery, stale readings and economy independence",
+      "passed": true,
+      "ms": 15672,
+      "detail": {
+        "requests": 4,
+        "intervals": [
+          4999,
+          5000,
+          5000
+        ]
+      }
+    },
+    {
+      "name": "same-ID exclusive session writers, different-ID isolation, local report",
+      "passed": true,
+      "ms": 291,
+      "detail": {
+        "records": 2
+      }
+    },
+    {
+      "name": "storage denied/quota/corruption remain usable",
+      "passed": true,
+      "ms": 800
+    },
+    {
+      "name": "standalone scene and widget are transparent, painted, no management UI",
+      "passed": true,
+      "ms": 910
+    },
+    {
+      "name": "transparent original artwork PNG generated from preserved canvas",
+      "passed": true,
+      "ms": 241,
+      "detail": {
+        "bytes": 3867
+      }
+    },
+    {
+      "name": "no browser script errors",
+      "passed": true,
+      "ms": 0,
+      "detail": {
+        "errors": 0
+      }
+    }
+  ],
+  "scriptErrors": []
+}

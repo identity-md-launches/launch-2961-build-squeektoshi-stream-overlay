@@ -1,0 +1,493 @@
+{
+  "limitBytes": 8388608,
+  "measuredBytesExcludingThisReport": 2887777,
+  "reportAllowanceBytes": 32768,
+  "passesWithReportAllowance": true,
+  "scope": "Entire tracked plus nonignored source/artifact file set; stricter than added bytes only",
+  "protectedUnchanged": [
+    {
+      "path": "package.json",
+      "unchanged": true,
+      "sha256": "1ef5662937af72b05793aa8536b79b3cc0e74100a8868ecc5794bf3ecb477843"
+    },
+    {
+      "path": "package-lock.json",
+      "unchanged": true,
+      "sha256": "37cb435b10040c7975bcf2c7243cecf90a5c73cf9b6b47a1738a77ee60cfdc0c"
+    },
+    {
+      "path": "tsconfig.json",
+      "unchanged": true,
+      "sha256": "a343033b04d1c353814a2410da25c23ed3dc22205a0b72dc54f571387d4ff079"
+    },
+    {
+      "path": "scripts/build.mjs",
+      "unchanged": true,
+      "sha256": "624a60d5d76bf93623ef46185cca7e43eed1fd913f6c51b2f808afeebc94f264"
+    },
+    {
+      "path": "scripts/preview.mjs",
+      "unchanged": true,
+      "sha256": "eab8ee90e22eebc2272d0c852416bdb2d93c0ae4310a8a25ef215bb734daefa3"
+    },
+    {
+      "path": "tests/logic.test.cjs",
+      "unchanged": true,
+      "sha256": "c23f93c47722cae9bd220e694b1d3148288c00d6a1a43396e870b318a691c72f"
+    }
+  ],
+  "archives": [
+    {
+      "name": "squeektoshi-source.zip",
+      "entries": 53,
+      "bytes": 123857,
+      "sha256": "25cf18f2c24a337ace4dfee4bb5900c0b50c9e87ac397dd3f062d9776d11c897",
+      "badPaths": []
+    },
+    {
+      "name": "squeektoshi-static.zip",
+      "entries": 15,
+      "bytes": 56086,
+      "sha256": "e4879c33c166396783109577d31224c3d658f238522449a7dd3efe453c27303d",
+      "badPaths": []
+    }
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 172
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 1386
+    },
+    {
+      "path": "DESIGN.md",
+      "bytes": 8310
+    },
+    {
+      "path": "LICENSES/design-guidance.txt",
+      "bytes": 11964
+    },
+    {
+      "path": "NOTICE.md",
+      "bytes": 1208
+    },
+    {
+      "path": "PATH_BUDGET.md",
+      "bytes": 1373
+    },
+    {
+      "path": "README.md",
+      "bytes": 5788
+    },
+    {
+      "path": "SCHEMA.md",
+      "bytes": 7995
+    },
+    {
+      "path": "VALIDATION.md",
+      "bytes": 15018
+    },
+    {
+      "path": "artifacts/art-preservation.json",
+      "bytes": 275
+    },
+    {
+      "path": "artifacts/browser-alert-positions-results.json",
+      "bytes": 54
+    },
+    {
+      "path": "artifacts/browser-epoch-results.json",
+      "bytes": 622
+    },
+    {
+      "path": "artifacts/browser-extended-results.json",
+      "bytes": 1612
+    },
+    {
+      "path": "artifacts/browser-keyboard-results.json",
+      "bytes": 245
+    },
+    {
+      "path": "artifacts/browser-refresh-results.json",
+      "bytes": 160
+    },
+    {
+      "path": "artifacts/browser-resources-results.json",
+      "bytes": 201
+    },
+    {
+      "path": "artifacts/browser-results.json",
+      "bytes": 4929
+    },
+    {
+      "path": "artifacts/browser-touch-results.json",
+      "bytes": 173
+    },
+    {
+      "path": "artifacts/build-log.txt",
+      "bytes": 520
+    },
+    {
+      "path": "artifacts/build.json",
+      "bytes": 1613
+    },
+    {
+      "path": "artifacts/clean-source-results.json",
+      "bytes": 1630
+    },
+    {
+      "path": "artifacts/commands.json",
+      "bytes": 2370
+    },
+    {
+      "path": "artifacts/deployed-check.json",
+      "bytes": 1351
+    },
+    {
+      "path": "artifacts/design-review.md",
+      "bytes": 6140
+    },
+    {
+      "path": "artifacts/live-api-results.json",
+      "bytes": 903
+    },
+    {
+      "path": "artifacts/live-bridge-results.json",
+      "bytes": 1455
+    },
+    {
+      "path": "artifacts/logic-tests.txt",
+      "bytes": 4035
+    },
+    {
+      "path": "artifacts/original-project.png",
+      "bytes": 3867
+    },
+    {
+      "path": "artifacts/release-results.json",
+      "bytes": 361
+    },
+    {
+      "path": "artifacts/screenshots/configurator-1440.png",
+      "bytes": 106109
+    },
+    {
+      "path": "artifacts/screenshots/configurator-320.png",
+      "bytes": 94387
+    },
+    {
+      "path": "artifacts/screenshots/configurator-390.png",
+      "bytes": 97786
+    },
+    {
+      "path": "artifacts/screenshots/configurator-768.png",
+      "bytes": 103935
+    },
+    {
+      "path": "artifacts/screenshots/keyboard-390.png",
+      "bytes": 137439
+    },
+    {
+      "path": "artifacts/screenshots/overlay.png",
+      "bytes": 43558
+    },
+    {
+      "path": "artifacts/screenshots/scene-live.png",
+      "bytes": 39046
+    },
+    {
+      "path": "artifacts/screenshots/scene-real-api-bridged.png",
+      "bytes": 45302
+    },
+    {
+      "path": "artifacts/screenshots/widget-long-alert-fit.png",
+      "bytes": 28688
+    },
+    {
+      "path": "artifacts/screenshots/widget-turkish-alert.png",
+      "bytes": 22317
+    },
+    {
+      "path": "artifacts/screenshots/widget.png",
+      "bytes": 12901
+    },
+    {
+      "path": "artifacts/screenshots/zoom-200.png",
+      "bytes": 703701
+    },
+    {
+      "path": "artifacts/soak-final-results.json",
+      "bytes": 585644
+    },
+    {
+      "path": "artifacts/squeektoshi-source.zip",
+      "bytes": 123857
+    },
+    {
+      "path": "artifacts/squeektoshi-static.zip",
+      "bytes": 56086
+    },
+    {
+      "path": "artifacts/taste-results.json",
+      "bytes": 3046
+    },
+    {
+      "path": "artifacts/typecheck.txt",
+      "bytes": 25
+    },
+    {
+      "path": "artifacts/validation-summary.json",
+      "bytes": 2331
+    },
+    {
+      "path": "artifacts/webkit-results.json",
+      "bytes": 1342
+    },
+    {
+      "path": "dist/assets/art.js",
+      "bytes": 13558
+    },
+    {
+      "path": "dist/assets/configurator.css",
+      "bytes": 8195
+    },
+    {
+      "path": "dist/assets/configurator.js",
+      "bytes": 50789
+    },
+    {
+      "path": "dist/assets/core.js",
+      "bytes": 32743
+    },
+    {
+      "path": "dist/assets/favicon.svg",
+      "bytes": 559
+    },
+    {
+      "path": "dist/assets/og-image.svg",
+      "bytes": 1217
+    },
+    {
+      "path": "dist/assets/original-project.png",
+      "bytes": 3867
+    },
+    {
+      "path": "dist/assets/overlay.css",
+      "bytes": 3249
+    },
+    {
+      "path": "dist/assets/overlay.js",
+      "bytes": 20538
+    },
+    {
+      "path": "dist/assets/settings.js",
+      "bytes": 10465
+    },
+    {
+      "path": "dist/assets/storage.js",
+      "bytes": 4470
+    },
+    {
+      "path": "dist/build.json",
+      "bytes": 1613
+    },
+    {
+      "path": "dist/downloads/squeektoshi-source.zip",
+      "bytes": 123857
+    },
+    {
+      "path": "dist/downloads/squeektoshi-static.zip",
+      "bytes": 56086
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 1405
+    },
+    {
+      "path": "dist/overlay.html",
+      "bytes": 730
+    },
+    {
+      "path": "dist/widget.html",
+      "bytes": 712
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 266
+    },
+    {
+      "path": "package.json",
+      "bytes": 446
+    },
+    {
+      "path": "scripts/audit-bundle.py",
+      "bytes": 2563
+    },
+    {
+      "path": "scripts/build.mjs",
+      "bytes": 996
+    },
+    {
+      "path": "scripts/check-clean-source.py",
+      "bytes": 2241
+    },
+    {
+      "path": "scripts/install-tools.mjs",
+      "bytes": 1238
+    },
+    {
+      "path": "scripts/package-release.py",
+      "bytes": 2449
+    },
+    {
+      "path": "scripts/preview.mjs",
+      "bytes": 1245
+    },
+    {
+      "path": "scripts/summarize-validation.py",
+      "bytes": 3214
+    },
+    {
+      "path": "src/assets/art.js",
+      "bytes": 13558
+    },
+    {
+      "path": "src/assets/configurator.css",
+      "bytes": 8195
+    },
+    {
+      "path": "src/assets/configurator.js",
+      "bytes": 50789
+    },
+    {
+      "path": "src/assets/core.js",
+      "bytes": 32743
+    },
+    {
+      "path": "src/assets/favicon.svg",
+      "bytes": 559
+    },
+    {
+      "path": "src/assets/og-image.svg",
+      "bytes": 1217
+    },
+    {
+      "path": "src/assets/original-project.png",
+      "bytes": 3867
+    },
+    {
+      "path": "src/assets/overlay.css",
+      "bytes": 3249
+    },
+    {
+      "path": "src/assets/overlay.js",
+      "bytes": 20538
+    },
+    {
+      "path": "src/assets/settings.js",
+      "bytes": 10465
+    },
+    {
+      "path": "src/assets/storage.js",
+      "bytes": 4470
+    },
+    {
+      "path": "src/build.json",
+      "bytes": 1613
+    },
+    {
+      "path": "src/index.html",
+      "bytes": 1405
+    },
+    {
+      "path": "src/overlay.html",
+      "bytes": 730
+    },
+    {
+      "path": "src/widget.html",
+      "bytes": 712
+    },
+    {
+      "path": "tests/browser-alert-positions.mjs",
+      "bytes": 2138
+    },
+    {
+      "path": "tests/browser-epochs.mjs",
+      "bytes": 1357
+    },
+    {
+      "path": "tests/browser-extended.mjs",
+      "bytes": 10653
+    },
+    {
+      "path": "tests/browser-keyboard.mjs",
+      "bytes": 1621
+    },
+    {
+      "path": "tests/browser-refresh.mjs",
+      "bytes": 1372
+    },
+    {
+      "path": "tests/browser-resources.mjs",
+      "bytes": 3363
+    },
+    {
+      "path": "tests/browser-suite.mjs",
+      "bytes": 21156
+    },
+    {
+      "path": "tests/browser-support.mjs",
+      "bytes": 3517
+    },
+    {
+      "path": "tests/browser-touch.mjs",
+      "bytes": 2372
+    },
+    {
+      "path": "tests/live-bridge.mjs",
+      "bytes": 2424
+    },
+    {
+      "path": "tests/live-check.mjs",
+      "bytes": 1332
+    },
+    {
+      "path": "tests/logic.test.cjs",
+      "bytes": 19017
+    },
+    {
+      "path": "tests/regressions.test.cjs",
+      "bytes": 8520
+    },
+    {
+      "path": "tests/release-check.mjs",
+      "bytes": 1798
+    },
+    {
+      "path": "tests/soak.mjs",
+      "bytes": 4348
+    },
+    {
+      "path": "tests/webkit.mjs",
+      "bytes": 1927
+    },
+    {
+      "path": "tooling.lock.json",
+      "bytes": 1011
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 342
+    },
+    {
+      "path": "types/globals.d.ts",
+      "bytes": 1379
+    },
+    {
+      "path": "types/model.d.ts",
+      "bytes": 2079
+    }
+  ]
+}

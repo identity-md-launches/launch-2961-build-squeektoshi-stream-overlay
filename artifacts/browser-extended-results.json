@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-06T13:34:47.425Z",
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "name": "real pointer drag changes placement and one undo reverses gesture",
+      "passed": true
+    },
+    {
+      "name": "touchscreen primary flow and numeric alternative",
+      "passed": true,
+      "detail": {
+        "emulatedTouch": true,
+        "physicalDevice": false
+      }
+    },
+    {
+      "name": "clipboard denied: full selected URL fallback, distinct setup link",
+      "passed": true,
+      "detail": {
+        "obsLength": 2232,
+        "setupLength": 2247
+      }
+    },
+    {
+      "name": "all grouped/custom layouts and long numeric data stay inside format",
+      "passed": true,
+      "detail": {
+        "count": 20,
+        "fail": []
+      }
+    },
+    {
+      "name": "speed km/h and distance units convert; all metric switches work",
+      "passed": true
+    },
+    {
+      "name": "extreme Turkish widget alerts fit at readable font and never overlap content",
+      "passed": true,
+      "detail": {
+        "font": 18,
+        "width": 456,
+        "height": 170.5625,
+        "collisions": []
+      }
+    },
+    {
+      "name": "event switches and levels honor silence and queue tests",
+      "passed": true
+    },
+    {
+      "name": "two roots keep theme, language, parts, state and destroy independent",
+      "passed": true
+    },
+    {
+      "name": "new reset token produces independent measured session without deleting old report",
+      "passed": true
+    },
+    {
+      "name": "sparse fresh fields render dashes, not invented numbers",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "buildId": "705ce9dc65335d76b04bd6ea4ca55a275499620d3fb41c5d3b2cbd75ed0787f8",
+  "basedOnCommit": "44e6127595d7e248785eb195fd0cb4d7bc14be24",
+  "builtAt": "2026-11-06T13:52:35.979028+00:00",
+  "hostingName": "squeektoshi-stream-overlay-obs-a.identitymd.eth",
+  "runtimeFiles": {
+    "assets/art.js": "7c97e1aa32cc2bfcdbe666ffa43d5ec863227f1193fe7e3a493791a787b29a4c",
+    "assets/configurator.css": "145c7456dac0b2d646f1fe161990ac814186bebc3a29744a47121bd7986bb334",
+    "assets/configurator.js": "d354c1a9eff8f59f77b9778e7a09af84cce8d2b5aae1978a5b2573abf33d9c4d",
+    "assets/core.js": "a9dc106150084536a9872a289c5a1af0d65a32ed008fd509e9b11453082711c1",
+    "assets/favicon.svg": "93ab11fad7023157d278fc5e43039609b9f6b09f04940aff3f01e56e4e581231",
+    "assets/og-image.svg": "a7581762d82d0762934296093e7a5fb32f7e11ecdfc80706af77691d9b52be98",
+    "assets/original-project.png": "9ce79305ed9949c41068f0ec753dd15a211cd12191617ad18f38d9c42bb29d9d",
+    "assets/overlay.css": "d6906dcab516c069fccc450e6123fad4347831bb019aef4f99ca9e04c45c6cd7",
+    "assets/overlay.js": "ca87c61e5c4751cc05a8552343767fa618f656867747b0b0df85872e84610bd2",
+    "assets/settings.js": "1f07430361517f2caae40bf320f7bb7287cf0bbdb5f4063ce048a742cfd8e603",
+    "assets/storage.js": "2867021ab3e205544db7cc75cdeb50ed255d56749001c39c0ba3132c13fb403b",
+    "index.html": "b38196d6d8dafdb75b1b64bf726610694fee9e4c98382035a9aecf9ce9615341",
+    "overlay.html": "72667db6d02e16f9b22367d7c024363baeefd5882f981878693b1316abb03778",
+    "widget.html": "7b94f1e14ac97a4abd9df4b98da040026a78ce895bcbba606a4b3efa2f6b4ba5"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "durationMs": 234,
+      "output": "dist/assets/overlay.css\ndist/assets/overlay.js\ndist/assets/settings.js\ndist/assets/storage.js\ndist/build.json\ndist/index.html\ndist/overlay.html\ndist/widget.html\nBuilt 15 files, 154110 bytes.\nnpm warn Unknown env config \"store-dir\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\nnpm warn Unknown env config \"cache-dir\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options."
+    },
+    {
+      "command": "TypeScript 5.9.3: tsc -p tsconfig.json",
+      "exitCode": 0,
+      "durationMs": 1402,
+      "output": ""
+    },
+    {
+      "command": "npm test (original 28 tests)",
+      "exitCode": 0,
+      "durationMs": 425,
+      "output": "\u2714 sprites keep a rectangular shape (0.431815ms)\n\u2139 tests 28\n\u2139 suites 0\n\u2139 pass 28\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 168.994777\nnpm warn Unknown env config \"store-dir\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\nnpm warn Unknown env config \"cache-dir\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options."
+    },
+    {
+      "command": "node --test tests/logic.test.cjs tests/regressions.test.cjs",
+      "exitCode": 0,
+      "durationMs": 248,
+      "output": "\u2714 new session IDs are valid unique tokens (1.796809ms)\n\u2714 version 2 rejects duplicate keys and invalid legacy fields atomically (0.536164ms)\n\u2714 unsupported precision is missing instead of a rounded claimed total (0.254577ms)\n\u2714 corrupt saved session values cannot inject negative or nonfinite counters (0.384684ms)\n\u2139 tests 56\n\u2139 suites 0\n\u2139 pass 56\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 164.127046"
+    }
+  ],
+  "passed": true
+}

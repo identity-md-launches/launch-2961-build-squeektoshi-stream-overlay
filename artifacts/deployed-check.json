@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-06T12:48:06.456695+00:00",
+  "deployment": "existing pinned release; this task does not publish",
+  "checks": [
+    {
+      "url": "https://squeektoshi-stream-overlay-obs-a.identitymd.eth.limo/",
+      "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1029)>"
+    },
+    {
+      "url": "https://ipfs.io/ipfs/bafybeidryhek6pk6xrcluuiw5vwmtxxmneci5qk5qdyu777kj4jvydxtse/index.html",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://api.squeekchain.com/v1/economy/state",
+      "status": 200,
+      "contentType": "application/json",
+      "csp": null,
+      "sha256": "9ca77d70deeb5362dd976c460d04151062edea86b15381255986d55dff03e147",
+      "bytes": 23951,
+      "asset": {
+        "address": "0xd78a3956cf63164d1fa1c622ad3c66623162fa1e",
+        "symbol": "SQK",
+        "decimals": 18
+      },
+      "supply": {
+        "capBaseUnits": "2100000000000000000000000000",
+        "premintBaseUnits": "210000000000000000000000000",
+        "miningMintedBaseUnits": "4189010598012554959716406",
+        "totalMintedBaseUnits": "214189010598012554959716406",
+        "totalBurnedBaseUnits": "151312321292069735117",
+        "liveSupplyBaseUnits": "214188859285691262889981289",
+        "unmintedCapacityBaseUnits": "1885810989401987445040283594"
+      }
+    }
+  ]
+}

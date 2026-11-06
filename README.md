@@ -1,141 +1,73 @@
 # Squeektoshi Stream Overlay
 
-A static, fully client-side streamer tool. It adds Squeektoshi, the Squeekchain hamster on the WHEELY9000 wheel, to a live stream as an OBS or Streamlabs browser source. It has a configurable transparent overlay, queued event alerts, a stream session counter, and an animated scene that keeps moving when nobody interacts with it.
+A static OBS/Streamlabs browser source with the original Squeektoshi hamster and WHEELY9000 wheel. Running and healthy rest both have a live pose. The editor, transparent scene and widget share one root-scoped renderer; there are no frames, runtime packages, accounts, wallets, tracking or backend.
 
-No backend, no wallet, no signing, no keys, no accounts, no tracking. It only reads the public API.
+The site is exported in **`dist/`**, including its local assets and downloadable source/static ZIPs. Existing `overlay.html`, `widget.html` and their original parameters remain supported. The project remains `squeektoshi-stream-overlay-obs-a.identitymd.eth`; no contract, address or token was deployed or replaced.
 
-**Verification status:** nothing here has been executed on the machine that wrote it. The shell was unavailable for the original build and again for the revision, so the build, tests, typecheck, probe and browser checks did not run, and `dist/` was edited by hand. See [VALIDATION.md](VALIDATION.md) and run the commands below before relying on it.
+## Use it
 
-## Pages
+1. Open `index.html` from a static HTTP(S) server. Choose **Hamster only**, **Hamster + essentials** or **Full scene**.
+2. Try running and sleeping in the labeled simulated preview. Choose a format or edit the advanced disclosures if needed.
+3. Copy **OBS URL**, then paste it into an OBS Browser or Streamlabs Browser Source. Apply the exact width and height shown under the button.
 
-| Page | File | Browser source size | Use |
-| --- | --- | --- | --- |
-| Configurator | `index.html` | Normal browser | Live preview on a checkerboard, generates the URL |
-| Full scene | `overlay.html` | 1920 × 1080 | Whole-scene overlay |
-| Corner widget | `widget.html` | 480 × 270 | Small widget |
+The checkerboard, guides and editor controls never stream. Output is live by default; the preview is simulated by default. The separate **Use demo data in the OUTPUT URL** setting makes an explicitly labeled demo source. Sound is initially off. Use a sound test after enabling it; browser/OBS audio permissions and mixer settings still apply. Live mode requires internet access to `api.squeekchain.com`; the complete demo works offline once static files are available.
+
+Every changed source setting creates a new URL for you to apply. This editor cannot update or reset a remote OBS source. Browser-local reports include only measured sessions stored in that browser; OBS may use a different store. Same-ID sources allow one persistent writer, and conflicting or storage-denied mounts continue in private memory.
 
 ## Install, preview and rebuild
 
-The site has no dependencies, so there is nothing to install beyond Node 20 or newer.
+Node 20+ and Python 3 (only for release ZIP packaging) are sufficient. The original root package manifest and lockfile are preserved and have zero production dependencies.
 
 ```sh
-npm install        # nothing to fetch: the lockfile lists no packages
-npm test           # URL parsing, signal, alert, session, queue, demo and contrast checks
-npm run build      # copies src/ to dist/ (clears dist/ first)
-npm run preview    # serves dist/ at http://127.0.0.1:4173/
-npm run typecheck  # runs tsc on the JS with checkJs, fetching TypeScript through npx
+npm ci --ignore-scripts
+npm run build
+npm run preview
 ```
 
-Source lives in `src/`. `dist/` is the committed static export with relative URLs, so it works at a gateway subpath or on any static host. Edit `src/`, then rebuild. You can also open `dist/index.html` directly from disk, because the scripts are classic scripts rather than ES modules.
+Open the local preview URL printed by the command. The production build copies `src/` exactly into `dist/`; all assets use relative paths and work under a static subpath. No service worker or routing backend is needed. Keep `overlay.html`, `widget.html`, `index.html` and `assets/` together.
 
-## Add the overlay to OBS Studio
+To create the full deliverable, including build metadata and both downloadable archives:
 
-1. Open the configurator, choose your settings and select **Copy overlay URL**.
-2. In **Sources**, select **+** and choose **Browser**, then name it.
-3. Paste the URL into **URL**. Leave **Local file** off, because that mode cannot carry query parameters.
-4. Set **Width** and **Height**: 1920 × 1080 for `overlay.html`, 480 × 270 for `widget.html`.
-5. For chimes, tick **Control audio via OBS** and add `sound=1`.
-6. Transparency needs no setup. The page background is `transparent`. **Custom CSS** can stay at the OBS default or be empty. You can use it for tweaks such as `.panel { opacity: 0.9; }`, but do not add a background to `html` or `body`.
-7. Turn off **Shutdown source when not visible** so the session counter and alerts keep running while the scene is hidden.
+```sh
+python3 scripts/package-release.py
+```
 
-## Add the overlay to Streamlabs Desktop
+This clears/rebuilds `dist/`, emits `build.json`, creates `artifacts/squeektoshi-source.zip` and `artifacts/squeektoshi-static.zip`, and copies both to `dist/downloads/`. Archive inputs are allowlisted. The static archive contains the deployable app before the downloadable archives are attached, so ZIPs do not recursively include themselves. The source archive contains source, original manifest/lockfile, types, checks, documentation and release tooling. Rebuild with the command above to restore its archive-download links.
 
-1. Copy the URL from the configurator.
-2. In **Sources**, select **+**, choose **Browser Source**, then **Add Source**.
-3. Paste the URL and set the width and height as above.
-4. Leave **Custom CSS** at its default. The same note about backgrounds applies.
-5. Select **Done**, then drag and resize the source in the scene.
+## Development checks
 
-Sizing the source to anything other than the sizes above still works: the overlay shrinks its content to fit rather than clipping it.
+The required dev tooling is locked in `tooling.lock.json`; it never ships at runtime. Install it into disposable scratch without changing root dependencies:
 
-## URL parameters
+```sh
+node scripts/install-tools.mjs
+node test/scratch/tools/node_modules/typescript/bin/tsc -p tsconfig.json
+npm test
+node --test tests/*.test.cjs
+```
 
-Every value is validated. A bad value falls back to the default or clamps to the nearest allowed value, and is logged to the browser console only. It never shows on stream. The configurator's **Check an existing URL** field lists those problems.
+`npm test` still runs the original 28 tests. The full command runs **56 tests**. `checkJs` remains enabled with proper DOM/global declarations and no excluded source files.
 
-| Parameter | Default | Allowed values | Meaning |
-| --- | --- | --- | --- |
-| `pos` | `bottom-left` (scene), `bottom-right` (widget) | `top-left`, `top`, `top-right`, `left`, `right`, `bottom-left`, `bottom`, `bottom-right` | Where the hamster and panel sit |
-| `scale` | `1` | `0.5` to `3` | Size multiplier, reduced automatically if it would not fit |
-| `theme` | `burrow` | `burrow`, `arcade`, `paper`, `contrast` | Colour theme, including the art |
-| `lang` | `en` | `en`, `tr` | On-stream language |
-| `parts` | `hamster,stats,progress,session,alerts` | Comma list of `hamster`, `stats`, `progress`, `session`, `alerts`, `supply`, or `none` | Parts shown. `supply` adds the optional economy figure |
-| `alert_wake` | `1` | `1`, `0` | Hamster woke up alert |
-| `alert_sleep` | `1` | `1`, `0` | Hamster fell asleep alert |
-| `alert_block` | `1` | `1`, `0` | New Squeek block alert |
-| `alert_round` | `1` | `1`, `0` | Settlement round alert |
-| `alert_record` | `1` | `1`, `0` | Session distance record alert |
-| `alertsec` | `5` | Whole number, `2` to `15` | Seconds each alert stays on screen |
-| `sound` | `0` | `1`, `0` | Web Audio chimes, generated in the browser. Off by default |
-| `volume` | `40` | Whole number, `0` to `100` | Chime volume |
-| `poll` | `7` | Whole number, `5` to `10` | Seconds from the start of one status request to the start of the next, response time included |
-| `reset` | empty | `1`, or a token of 1 to 32 letters, digits, `-`, `_` | `1` starts a new session on every load. Any other token starts one once, when the token changes |
-| `persist` | `1` | `1`, `0` | Keep the session in `localStorage` |
-| `motion` | `1` | `1`, `0` | `0` holds a still pose. `prefers-reduced-motion` does the same |
-| `demo` | `0` | `1`, `0` | Simulated values, labelled "Demo data" on screen. No API requests, and nothing written to storage |
+For browser checks, install Chromium with the locked Playwright CLI, then run:
 
-Booleans also accept `true`/`false`, `on`/`off` and `yes`/`no`. The configurator itself also accepts these parameters plus `page=widget` to open with a setting preloaded.
+```sh
+export PLAYWRIGHT_BROWSERS_PATH="$PWD/test/scratch/browsers"
+node test/scratch/tools/node_modules/playwright/cli.js install chromium
+export SQUEEK_PLAYWRIGHT_MODULE="$PWD/test/scratch/tools/node_modules/playwright/index.mjs"
+node tests/browser-suite.mjs
+node tests/browser-extended.mjs
+node tests/browser-epochs.mjs
+node tests/browser-refresh.mjs
+node tests/browser-keyboard.mjs
+node tests/browser-resources.mjs
+node tests/browser-touch.mjs
+node tests/browser-alert-positions.mjs
+node tests/soak.mjs 1800000 artifacts/soak-final-results.json
+```
 
-## Alerts
+The scripts serve `dist/` under `/preview/` with a restrictive test CSP (`frame-ancestors 'none'`, `frame-src 'none'`, self-hosted scripts, only the fixed public API permitted for connections). They manage and close their own servers and browsers. An optional `SQUEEK_BROWSER_EXECUTABLE` selects an installed Chromium executable. Browser-system libraries must be present. `tests/live-check.mjs` separately tests direct public API access; `tests/live-bridge.mjs` is an explicitly labeled test-only transport fallback, not app code or a production backend.
 
-Alerts play one at a time with a 500 ms gap and never overlap. No alert fires on the first load.
+## What was checked
 
-| Alert | Fires when |
-| --- | --- |
-| Woke up | `measurement.coreStatus` goes from `IDLE` to `SPINNING` |
-| Fell asleep | `measurement.coreStatus` goes from `SPINNING` to `IDLE` |
-| New block | `builder.anchor.blockHeight` increases |
-| Round confirmed | `builder.anchor.settledThroughRound` increases |
-| Distance record | A run ends longer than every earlier run this session, at any distance above zero |
+See **[VALIDATION.md](VALIDATION.md)** for actual commands/results, the 01–32 evidence table, six requested flows, screenshots, limitations and final soak result. **[DESIGN.md](DESIGN.md)** records the final implemented tokens/components and the Better Interface review. **[SCHEMA.md](SCHEMA.md)** documents field bounds, versioned URL/import formats, session behavior and storage. The build's content identity is in `dist/build.json`; `CHANGELOG.md` explains the version and preserved base commit.
 
-The record fires when a run ends rather than while it is under way, so it reports the finished distance and never reads as pressure to keep running. If more alerts of one kind wait in the queue, the newest value replaces the older one. Alerts use one slide and fade and do not flash or blink.
-
-## Data fields used
-
-`GET https://api.squeekchain.com/v1/status`, polled every `poll` seconds:
-
-| Field | Use |
-| --- | --- |
-| `measurement.coreStatus` | `SPINNING` runs, `IDLE` sleeps with a "zzz" |
-| `measurement.rpmMilli` | `rpmMilli / 1000` is the RPM. Wheel speed is RPM × 6 degrees per second; leg speed is RPM × 0.25 frames per second, capped at 24 |
-| `measurement.speedMmPerSecond` | Speed stat |
-| `measurement.distanceMm` | Total distance and session distance |
-| `measurement.cumulativeWorkUnits` | Work units stat |
-| `measurement.freshness` | Anything except `online` means signal lost |
-| `measurement.staleAfterSeconds` | Age limit, 120 seconds if missing |
-| `measurement.observedAt`, `measurement.receivedAt`, `generatedAt` | Used to work out the age of the data |
-| `builder.anchor.blockHeight` | Block stat and alert |
-| `builder.anchor.blockProgress` | `value / 1e9`, clamped to 0 to 1, shown as a percentage |
-| `builder.anchor.settledThroughRound` | Round stat and alert |
-
-The live API places `freshness` and `staleAfterSeconds` under `measurement` and sends many numbers as strings. The parser accepts both strings and numbers, and also reads those two fields from the top level if they appear there.
-
-`GET https://api.squeekchain.com/v1/economy/state` is requested only with `supply` in `parts`, once a minute. It uses `asset.symbol`, `asset.decimals` and `supply.liveSupplyBaseUnits`. It runs on its own request chain, so a failure there only leaves that one figure at its last value.
-
-## Session counter
-
-- **Distance:** the current `distanceMm` minus the first reading. If the hardware counter restarts, the distance already run is kept.
-- **Running time:** time between consecutive fresh readings while `SPINNING`. The display counts up between readings. If the signal is lost, the time up to that moment is kept (at most 30 seconds since the last reading), and the counter holds still until a good reading arrives.
-- **Longest run:** the largest distance of one continuous run (scene page only).
-- **Where it lives:** `localStorage`, per page. If storage is missing or refuses, it stays in memory for that load and the overlay carries on. A session not updated for 12 hours starts over.
-
-## Signal-lost behaviour
-
-The overlay shows **SIGNAL LOST** (**SİNYAL KAYIP** in Turkish) when any of these is true:
-
-- A request fails, times out or returns a non-success status.
-- `measurement.freshness` is not `online`, or the payload is unusable.
-- The data is older than `staleAfterSeconds` by the streaming PC's clock. Age runs from `measurement.observedAt`, or from `receivedAt` and then `generatedAt` if that is missing. A `generatedAt` more than the limit after `observedAt` also counts, and so does a `generatedAt` that stops changing for longer than the limit.
-
-There is no allowance for clock error, so a streaming PC whose clock runs ahead by more than `staleAfterSeconds` shows SIGNAL LOST until its clock is corrected. Keep automatic time sync on.
-
-While lost, the last good values stay on screen, no alerts fire, the session distance and running time stop, and the wheel stops with a small no-signal icon. Polling continues, and the banner clears by itself on the next good reading. Before any data has arrived, values show as `–`. Raw error text is never displayed.
-
-The first good reading after a loss is treated like a first load: it sets a new comparison point without alerts, so a recovery does not fire a burst. Distance covered during the gap is still counted, because the hardware counter measured it.
-
-## Good to know
-
-- Demo mode compresses time so every alert appears within about a minute. It polls every 2 seconds, ignoring `poll`.
-- Under `prefers-reduced-motion` the hamster holds a still pose, and the status text still says what it is doing.
-- In a normal browser, a page may need a click before it can play sound. OBS and Streamlabs generally do not require that, but it has not been tested in either app.
-- `assets/og-image.svg` is an SVG because no tool was available to produce a PNG. Some link unfurlers do not render SVG, so a PNG is the better long-term choice.
-- All pixel art is original to this project, drawn from text sprites and canvas pixels in `src/assets/art.js`.
+Native OBS Studio, Streamlabs Desktop, physical devices, screen readers, native browser 200% zoom and the future published version are not certified by these checks. WebKit could not launch because system libraries are unavailable. Direct Chromium access to the API could not be established on this host; the lost state remained honest, and real API responses were separately verified via the documented test transport. Do not treat local worker checks as independent certification.

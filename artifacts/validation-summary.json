@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-06T13:52:52.363052+00:00",
+  "version": "2.0.0",
+  "buildId": "705ce9dc65335d76b04bd6ea4ca55a275499620d3fb41c5d3b2cbd75ed0787f8",
+  "baseCommit": "44e6127595d7e248785eb195fd0cb4d7bc14be24",
+  "fullAcceptanceClaimed": false,
+  "logicTests": {
+    "originalUnchanged": 28,
+    "new": 28,
+    "totalPassed": 56
+  },
+  "browser": {
+    "version": "154.0.8037.0",
+    "main": 21,
+    "extended": 10,
+    "additionalChecks": 6,
+    "totalChecks": 37,
+    "configurationMatrix": 320,
+    "alertPositionMatrix": 100,
+    "layoutFormatMatrix": 20,
+    "extraEvidence": [
+      "browser-epoch-results.json",
+      "browser-refresh-results.json",
+      "browser-keyboard-results.json",
+      "browser-resources-results.json",
+      "browser-touch-results.json",
+      "browser-alert-positions-results.json"
+    ]
+  },
+  "designChecksPassed": 16,
+  "soak": {
+    "passed": true,
+    "durationMs": 1805539,
+    "samples": 61,
+    "statusRequests": 360,
+    "economyRequests": 30,
+    "demoRequests": 0,
+    "errors": 0,
+    "cleanup": true,
+    "finalRendererHashesMatch": true,
+    "sources": [
+      {
+        "source": "demo",
+        "rendererNodeRange": [
+          49,
+          49
+        ],
+        "eventCountMaximum": 40,
+        "lastResourceEntries": 6,
+        "lastDOMCounters": {
+          "documents": 1,
+          "nodes": 95,
+          "jsEventListeners": 1
+        },
+        "sessionWrites": 0
+      },
+      {
+        "source": "live-mock",
+        "rendererNodeRange": [
+          47,
+          47
+        ],
+        "eventCountMaximum": 40,
+        "lastResourceEntries": 250,
+        "lastDOMCounters": {
+          "documents": 1,
+          "nodes": 183,
+          "jsEventListeners": 1
+        },
+        "sessionWrites": 360
+      }
+    ]
+  },
+  "gaps": [
+    "Native OBS Studio unverified",
+    "Native Streamlabs Desktop unverified",
+    "WebKit could not launch: host libraries missing",
+    "Physical touch devices, screen readers and native browser 200% zoom unverified; emulated touch and CSS zoom tested",
+    "Direct Chromium public-API transport failed on this host; unchanged real responses rendered through a test-only transport",
+    "Existing deployment unavailable; future published assets/version/CSP unverified",
+    "Provider commercial scope/price confirmation not supplied"
+  ]
+}

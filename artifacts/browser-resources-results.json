@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "remounts": 20,
+  "tones": 4,
+  "activeTimeouts": 0,
+  "activeIntervals": 0,
+  "activeRAFs": 0,
+  "activeObservers": 0,
+  "mediaListeners": 0,
+  "audioContexts": 0,
+  "nodes": 0
+}

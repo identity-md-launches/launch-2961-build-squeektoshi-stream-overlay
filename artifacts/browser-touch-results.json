@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "emulatedTouchDrag": true,
+  "oneUndoRestores": true,
+  "box": {
+    "x": 20,
+    "y": 65,
+    "w": 40,
+    "scale": 1
+  },
+  "physicalDevice": false
+}

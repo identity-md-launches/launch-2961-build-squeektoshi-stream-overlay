@@ -263,7 +263,7 @@
       if (compact) return;
       const x = 130 + Math.sin(clock / 1700) * 18 + Math.sin(clock / 610) * 4;
       const y = 30 + Math.cos(clock / 1300) * 16;
-      const wing = Math.floor(clock / 180) % 2 === 0;
+      const wing = Math.floor(clock / 500) % 2 === 0;
       rect(x, y, 1, 2, pal.moth);
       if (wing) { rect(x - 1, y, 1, 1, pal.moth); rect(x + 1, y, 1, 1, pal.moth); }
       else { rect(x - 1, y - 1, 1, 1, pal.moth); rect(x + 1, y - 1, 1, 1, pal.moth); }
@@ -368,4 +368,4 @@
   const api = { createStage: createStage, drawIcon: drawIcon, BODY: BODY, LEGS: LEGS, SLEEPING: SLEEPING, ALERT_ICONS: ALERT_ICONS };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SqueekArt = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this);
+})(globalThis);

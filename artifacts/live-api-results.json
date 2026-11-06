@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-06T13:26:11.193Z",
+  "source": "actual public API, no mocked responses",
+  "status": "Lost · Last-known values",
+  "api": [],
+  "failedRequests": [
+    {
+      "url": "https://api.squeekchain.com/v1/status",
+      "error": "net::ERR_EMPTY_RESPONSE"
+    },
+    {
+      "url": "https://api.squeekchain.com/v1/economy/state",
+      "error": "net::ERR_EMPTY_RESPONSE"
+    },
+    {
+      "url": "https://api.squeekchain.com/v1/status",
+      "error": "net::ERR_EMPTY_RESPONSE"
+    }
+  ],
+  "paint": {
+    "pixels": 8239,
+    "width": 320,
+    "height": 240,
+    "visible": true
+  },
+  "errors": [],
+  "text": "Lost · Last-known values\n\nRPM\n–\nSpeed\n–\nTotal distance\n–\nWork units\n–\nSqueek block\n–\nSettled round\n–\nBlock progress\n–\n\nThis stream\n\nDistance\n0.0 m\nRunning time\n00:00\nLongest run\n0.0 m\nSupply\n– · Last-known values",
+  "passed": false
+}
