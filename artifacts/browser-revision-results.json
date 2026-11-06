@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "results": {
+    "scale": {
+      "steps": 51,
+      "copyChecks": 51
+    },
+    "alertCloseUp": [
+      {
+        "width": 390,
+        "visibleFraction": 1
+      },
+      {
+        "width": 1440,
+        "visibleFraction": 1
+      }
+    ],
+    "language": {
+      "label": "Title · TR"
+    },
+    "selection": {
+      "dragged": "stats",
+      "numericEdit": 11,
+      "keyboard": "progress"
+    },
+    "version": "2.0.2",
+    "contrast": 5.98,
+    "standalone": "sized by class, no :has()"
+  }
+}

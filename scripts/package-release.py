@@ -6,7 +6,11 @@ source=ROOT/'src'
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 files={str(p.relative_to(source)):sha(p) for p in sorted(source.rglob('*')) if p.is_file() and p.name!='build.json'}
 build_id=hashlib.sha256(json.dumps(files,sort_keys=True,separators=(',',':')).encode()).hexdigest()
-metadata={'version':'2.0.1','buildId':build_id,'basedOnCommit':'cacb4d8cead5b5f8ab12f7a8d9e5dbe498f80a14','builtAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostingName':'squeektoshi-stream-overlay-obs-a.identitymd.eth','runtimeFiles':files}
+VERSION='2.0.2'
+# The only version a visitor sees is the configurator label; refuse to package a mismatch.
+label=(source/'assets'/'configurator.js').read_text()
+if f"'Version {VERSION} · " not in label or f"'Sürüm {VERSION} · " not in label:raise SystemExit('configurator version label does not match '+VERSION)
+metadata={'version':VERSION,'buildId':build_id,'basedOnCommit':'25586cb70773f31fa89e369c2bc569c81139ef25','builtAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostingName':'squeektoshi-stream-overlay-obs-a.identitymd.eth','runtimeFiles':files}
 (source/'build.json').write_text(json.dumps(metadata,indent=2)+'\n')
 subprocess.run(['node','scripts/build.mjs'],cwd=ROOT,check=True)
 artifacts=ROOT/'artifacts';artifacts.mkdir(exist_ok=True)

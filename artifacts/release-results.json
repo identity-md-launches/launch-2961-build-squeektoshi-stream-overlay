@@ -1,15 +1,15 @@
 {
   "passed": true,
-  "buildId": "cf1cce25fd9d8d35b1bb3de079c3ae5cd1503189966f3ae8cf05f087f1b71fe4",
+  "buildId": "3e3c6361ff3957b989bdf7af353c4ba88fe6076b890944b2e3ed80ad3afbea62",
   "verifiedRuntimeFiles": 14,
   "archives": [
     {
       "archive": "squeektoshi-source.zip",
-      "bytes": 128009
+      "bytes": 132274
     },
     {
       "archive": "squeektoshi-static.zip",
-      "bytes": 56251
+      "bytes": 56736
     }
   ],
   "pngDownload": "squeektoshi-transparent-canvas.png"

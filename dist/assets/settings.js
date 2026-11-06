@@ -125,7 +125,8 @@
   function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
   function colors(s) {
     const c=Object.assign({},C.THEMES[s.config.theme].ui);Object.entries(s.presentation.colors).forEach(([k,v])=>{if(v)c[k]=v;});
-    if(s.presentation.colors.text)c.muted=c.text;
+    // Labels use the measured text colour whenever text or panel is custom, so the shown ratio covers them too.
+    if(s.presentation.colors.text||s.presentation.colors.panel)c.muted=c.text;
     c['on-accent']=contrast('#000000',c.accent)>contrast('#ffffff',c.accent)?'#000000':'#ffffff';return c;
   }
   function history(initial) {

@@ -1,23 +1,23 @@
 {
-  "version": "2.0.1",
-  "buildId": "cf1cce25fd9d8d35b1bb3de079c3ae5cd1503189966f3ae8cf05f087f1b71fe4",
-  "basedOnCommit": "cacb4d8cead5b5f8ab12f7a8d9e5dbe498f80a14",
-  "builtAt": "2026-11-06T14:09:19.951761+00:00",
+  "version": "2.0.2",
+  "buildId": "3e3c6361ff3957b989bdf7af353c4ba88fe6076b890944b2e3ed80ad3afbea62",
+  "basedOnCommit": "25586cb70773f31fa89e369c2bc569c81139ef25",
+  "builtAt": "2026-11-06T14:32:02.629132+00:00",
   "hostingName": "squeektoshi-stream-overlay-obs-a.identitymd.eth",
   "runtimeFiles": {
     "assets/art.js": "7c97e1aa32cc2bfcdbe666ffa43d5ec863227f1193fe7e3a493791a787b29a4c",
     "assets/configurator.css": "8f42154a3c0d63467fa802e4e1131a392c6adca52087be5ebf14b82dab21c886",
-    "assets/configurator.js": "d354c1a9eff8f59f77b9778e7a09af84cce8d2b5aae1978a5b2573abf33d9c4d",
+    "assets/configurator.js": "f70dc60dfa168f283d592a222b0247ea481ffaf72b3ec6cd825c28173db13181",
     "assets/core.js": "6e5e92c69e970e7ddf3755563125b8b86d0c50fadac36fcf42c365796be38ff4",
     "assets/favicon.svg": "93ab11fad7023157d278fc5e43039609b9f6b09f04940aff3f01e56e4e581231",
     "assets/og-image.svg": "a7581762d82d0762934296093e7a5fb32f7e11ecdfc80706af77691d9b52be98",
     "assets/original-project.png": "9ce79305ed9949c41068f0ec753dd15a211cd12191617ad18f38d9c42bb29d9d",
-    "assets/overlay.css": "d6906dcab516c069fccc450e6123fad4347831bb019aef4f99ca9e04c45c6cd7",
+    "assets/overlay.css": "b040bd2e09fd3632d27dd2a5b5243ba2403d9adb756669f968923ab482c48fcf",
     "assets/overlay.js": "bd56e491de6f7f4bfdfd121c56593d517e22cb90c3dd1cf6d65df71c0e5663fd",
-    "assets/settings.js": "1f07430361517f2caae40bf320f7bb7287cf0bbdb5f4063ce048a742cfd8e603",
+    "assets/settings.js": "7b8e04ec463b41636df25d1689c3bba5bfe44d2db0e1f6c8d8ced8f3a3445cb7",
     "assets/storage.js": "2867021ab3e205544db7cc75cdeb50ed255d56749001c39c0ba3132c13fb403b",
     "index.html": "b38196d6d8dafdb75b1b64bf726610694fee9e4c98382035a9aecf9ce9615341",
-    "overlay.html": "72667db6d02e16f9b22367d7c024363baeefd5882f981878693b1316abb03778",
-    "widget.html": "7b94f1e14ac97a4abd9df4b98da040026a78ce895bcbba606a4b3efa2f6b4ba5"
+    "overlay.html": "96af888b7abffa626e7a948fb3aeaac54bbe27d5ce3cf846d27d1fb3751a2a7c",
+    "widget.html": "9396c186b1d5970a486f861a01e423db6cbf8c8a82e15546c5185b762e58fd2e"
   }
 }

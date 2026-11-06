@@ -1,14 +1,14 @@
 {
-  "at": "2026-11-06T14:10:24.792Z",
-  "browser": "153.0.8010.12",
+  "at": "2026-11-06T14:35:01.340Z",
+  "browser": "154.0.8037.0",
   "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src https://api.squeekchain.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'",
-  "passed": 21,
-  "failed": 0,
+  "passed": 20,
+  "failed": 1,
   "results": [
     {
       "name": "painted responsive configurator, primary action visible at 390, relative assets",
       "passed": true,
-      "ms": 2120,
+      "ms": 1688,
       "detail": [
         {
           "width": 320,
@@ -51,50 +51,51 @@
     {
       "name": "first-use: choose hamster, run, sleep, copy URL + dimensions under 60 seconds",
       "passed": true,
-      "ms": 537,
+      "ms": 385,
       "detail": {
-        "durationMs": 481
+        "durationMs": 369
       }
     },
     {
       "name": "demo cut/restore changes pose, clears alert, no API or session writes",
       "passed": true,
-      "ms": 592
+      "ms": 534
     },
     {
       "name": "profiles create/save/copy/rename/delete/undo and valid draft restore",
       "passed": true,
-      "ms": 535
+      "ms": 326
     },
     {
       "name": "import/export and URL check are atomic, portable and preserve settings",
       "passed": true,
-      "ms": 305
+      "ms": 172
     },
     {
       "name": "independent EN/TR interface and stream language, all five formats",
-      "passed": true,
-      "ms": 187
+      "passed": false,
+      "ms": 30015,
+      "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('#format')\n    - locator resolved to <select class=\"\" id=\"format\">…</select>\n  - attempting select option action\n    2 × waiting for element to be visible and enabled\n      - element is not visible\n    - retrying select option action\n    - waiting 20ms\n    2 × waiting for element to be visible and enabled\n      - element is not visible\n    - retrying select option action\n      - waiting 100ms\n    60 × waiting for element to be visible and enabled\n       - element is not visible\n     - retrying select option action\n       - waiting 500ms\n\n    at /home/imd/.identitymd-8/work/096ab8a1-062c-4bd9-a441-499d14dfaadd/e455332d-3c19-4248-aa95-3a6fc8e2c229/tests/browser-suite.mjs:27:363\n    at async check (/home/imd/.identitymd-8/work/096ab8a1-062c-4bd9-a441-499d14dfaadd/e455332d-3c19-4248-aa95-3a6fc8e2c229/tests/browser-suite.mjs:6:67)\n    at async file:///home/imd/.identitymd-8/work/096ab8a1-062c-4bd9-a441-499d14dfaadd/e455332d-3c19-4248-aa95-3a6fc8e2c229/tests/browser-suite.mjs:26:1"
     },
     {
       "name": "20 undo/redo steps and visual edits preserve ID",
       "passed": true,
-      "ms": 2567
+      "ms": 1421
     },
     {
       "name": "custom layout numeric and keyboard controls, lock and reset",
       "passed": true,
-      "ms": 564
+      "ms": 401
     },
     {
       "name": "all-hidden state is explicit; preview backgrounds do not change URL",
       "passed": true,
-      "ms": 231
+      "ms": 133
     },
     {
       "name": "keyboard focus and 200% CSS zoom reflow",
       "passed": true,
-      "ms": 931,
+      "ms": 142,
       "detail": {
         "width": 768,
         "scroll": 768,
@@ -106,7 +107,7 @@
     {
       "name": "320 combinations: formats × themes × languages × positions, painted and bounded",
       "passed": true,
-      "ms": 2996,
+      "ms": 1876,
       "detail": {
         "count": 320,
         "failures": []
@@ -115,7 +116,7 @@
     {
       "name": "all 5 alerts sequential, gap, long Turkish widget text stays bounded",
       "passed": true,
-      "ms": 14675,
+      "ms": 14195,
       "detail": {
         "alerts": 5,
         "gaps": 5
@@ -124,7 +125,7 @@
     {
       "name": "audio master-off silence, three generated tones, loss cancellation",
       "passed": true,
-      "ms": 106,
+      "ms": 49,
       "detail": {
         "oscillatorStarts": 9,
         "tones": 3
@@ -133,16 +134,16 @@
     {
       "name": "motion-off stops draw loop, reduced-motion stops it, 15/30 FPS bounded",
       "passed": true,
-      "ms": 4579,
+      "ms": 4547,
       "detail": {
-        "draws15": 15,
-        "draws30": 25
+        "draws15": 14,
+        "draws30": 24
       }
     },
     {
       "name": "25 remounts; destroy cancels timers, RAF, observers and delayed fetch/finally",
       "passed": true,
-      "ms": 6785,
+      "ms": 6667,
       "detail": {
         "remounts": 25,
         "delayedRequests": 1
@@ -151,20 +152,20 @@
     {
       "name": "live polling outage/recovery, stale readings and economy independence",
       "passed": true,
-      "ms": 15698,
+      "ms": 15642,
       "detail": {
         "requests": 4,
         "intervals": [
-          4990,
-          5000,
-          5000
+          4999,
+          5001,
+          4999
         ]
       }
     },
     {
       "name": "same-ID exclusive session writers, different-ID isolation, local report",
       "passed": true,
-      "ms": 291,
+      "ms": 201,
       "detail": {
         "records": 2
       }
@@ -172,17 +173,17 @@
     {
       "name": "storage denied/quota/corruption remain usable",
       "passed": true,
-      "ms": 742
+      "ms": 344
     },
     {
       "name": "standalone scene and widget are transparent, painted, no management UI",
       "passed": true,
-      "ms": 826
+      "ms": 682
     },
     {
       "name": "transparent original artwork PNG generated from preserved canvas",
       "passed": true,
-      "ms": 226,
+      "ms": 174,
       "detail": {
         "bytes": 3867
       }

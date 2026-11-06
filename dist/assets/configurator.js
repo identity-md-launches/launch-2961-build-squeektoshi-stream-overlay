@@ -9,7 +9,7 @@
   try{state=location.search?S.parse(location.search,qs.get('page')==='widget'?'widget':'scene').settings:draft?draft.settings:S.defaults();}catch(_){state=draft?S.clone(draft.settings):S.defaults();initialError=true;}
   if(!location.search&&!draft)state.sessionId=S.id();
   let profiles=Store.loadProfiles(),profileId='',renderer=null,livePreview=false,previewMode='close',previewBg='checker',safe=false,grid=false,edit=false,selected='hamster',demoMode='automatic',demoRPM=48;
-  let history=S.history({settings:state,profiles,profileId}),gesture=false,diagnostic=null,previewScale=1,layoutObserver=null,fitRAF=0;
+  let history=S.history({settings:state,profiles,profileId}),gesture=false,diagnostic=null,previewScale=1,layoutObserver=null,alertObserver=null,alertShown=false,fitRAF=0;
   let refs={},openSections=new Set(),pageStarted=performance.now();
   const t=(en,tr)=>ui==='tr'?tr:en;
   /** @template {keyof HTMLElementTagNameMap} K @param {K} tag @param {string} [cls] @param {string} [text] @returns {HTMLElementTagNameMap[K]} */
@@ -32,14 +32,16 @@
     if(change)input.addEventListener('change',()=>change(input.value,input));
     return input;
   }
+  /** Snap to a step and drop binary float residue, so 0.05 steps give 1.65 rather than 1.6500000000000001. */
+  function snap(n,step){const places=(String(step).split('.')[1]||'').length;return Number((Math.round(n/step)*step).toFixed(places));}
   function bound(parent,label,id,path,min,max,step=1,range=false){
     const input=field(parent,label,id,range?'range':'number',get(path),(v,node)=>{
       const n=Number(v);if(v===''||!Number.isFinite(n)||n<min||n>max){node.setAttribute('aria-invalid','true');msg(t(`Use a number from ${min} to ${max}.`,` ${min} ile ${max} arasında bir sayı kullanın.`),true);return;}
-      node.removeAttribute('aria-invalid');put(path,Math.round(n/step)*step);record();refresh();
+      node.removeAttribute('aria-invalid');put(path,snap(n,step));record();refresh();
     });
     input.setAttribute('min',String(min));input.setAttribute('max',String(max));input.setAttribute('step',String(step));
     input.setAttribute('aria-describedby',id+'-hint');const info=el('span','hint',`${min}–${max}`);info.id=id+'-hint';input.parentElement.append(info);
-    if(range){input.addEventListener('input',()=>{put(path,Number(input.value));refresh(false);info.textContent=input.value;});}
+    if(range){input.addEventListener('input',()=>{put(path,snap(Number(input.value),step));refresh(false);info.textContent=input.value;});}
     return input;
   }
   function choice(parent,label,id,path,options){return field(parent,label,id,'select',get(path),(v)=>{put(path,v);record();refresh();},options);}
@@ -53,7 +55,7 @@
   function resetSection(keys){const base=S.defaults(state.page);keys.forEach(k=>{put(k,k.split('.').reduce((v,key)=>v[key],base));});record();build();}
   function build(){
     const focusedId=document.activeElement instanceof HTMLElement?document.activeElement.id:'';
-    if(renderer){renderer.destroy();renderer=null;}if(layoutObserver)layoutObserver.disconnect();if(fitRAF)cancelAnimationFrame(fitRAF);
+    if(renderer){renderer.destroy();renderer=null;}if(layoutObserver)layoutObserver.disconnect();if(alertObserver)alertObserver.disconnect();alertShown=false;if(fitRAF)cancelAnimationFrame(fitRAF);
     app.replaceChildren();refs={};document.documentElement.lang=ui;
     app.append(link(t('Skip to settings','Ayarlara geç'),'#settings','skip'));
     const header=el('header','top'),brand=el('div','brand'),icon=el('img');icon.src='assets/favicon.svg';icon.alt='';brand.append(icon,el('h1','','Squeektoshi Stream Overlay'));header.append(brand);
@@ -98,6 +100,7 @@
     const footer=el('footer');footer.append(el('span','',t('Squeekchain · WHEELY9000 · No accounts or tracking','Squeekchain · WHEELY9000 · Hesap veya izleme yok')),link(t('Project source','Proje kaynağı'),'https://github.com/identity-md-launches/launch-2961-build-squeektoshi-stream-overlay'));app.append(footer);
     renderer=R.mount(host,{settings:previewSettings(),preview:true,onDiagnostics:d=>{diagnostic=d;updateDiagnostics();if(!refs.editor.contains(document.activeElement))positionHandles();}});
     layoutObserver=new ResizeObserver(()=>fitPreview());layoutObserver.observe(preview);
+    alertObserver=new MutationObserver(()=>{const on=!!host.querySelector('.sq-alert.is-on');if(on!==alertShown){alertShown=on;if(previewMode==='close')fitPreview();}});alertObserver.observe(host,{subtree:true,attributes:true,attributeFilter:['class']});
     refresh(false);fitPreview();if(focusedId){const target=document.getElementById(focusedId);if(target)target.focus({preventScroll:true});}if(initialError){msg(t('This link is oversized or unsupported. Defaults are shown; no saved settings were changed.','Bu bağlantı çok büyük veya desteklenmiyor. Varsayılanlar gösteriliyor; kayıtlı ayarlar değiştirilmedi.'),true);initialError=false;}
   }
   function buildLook(parent){
@@ -105,7 +108,7 @@
     field(body,t('Editable preset','Düzenlenebilir hazır ayar'),'preset','select','',v=>{if(v)apply(S.preset(v,state),true);},[['',t('Choose a starting point','Başlangıç noktası seçin')],['minimal',t('Minimal · hamster + alerts','Minimal · hamster + uyarı')],['broadcast',t('Broadcast · full scene','Yayın · tam sahne')],['night',t('Night · arcade + progress','Gece · oyun + ilerleme')],['contrast',t('High contrast','Yüksek kontrast')],['data',t('Data · no hamster','Veri · hamstersız')]]);
     const a=fields(body);
     field(a,t('Output size','Çıktı boyutu'),'format','select',state.presentation.format,v=>{const next=S.clone(state);const newPage=v==='480x270'?'widget':'scene';if(newPage!==next.page){next.presentation=S.presentation(newPage);next.config.pos=newPage==='widget'?'bottom-right':'bottom-left';}next.page=newPage;next.presentation.format=v;apply(next,true);},Object.keys(S.FORMATS).map(k=>[k,k.replace('x',' × ')]));
-    choice(a,t('Stream language','Yayın dili'),'lang','config.lang',[['en','English'],['tr','Türkçe']]);
+    field(a,t('Stream language','Yayın dili'),'lang','select',state.config.lang,v=>{state.config.lang=v;record();build();},[['en','English'],['tr','Türkçe']]);
     choice(a,t('Theme','Tema'),'theme','config.theme',[['burrow',t('Burrow','Yuva')],['arcade',t('Arcade','Oyun')],['paper',t('Paper','Kağıt')],['contrast',t('High contrast','Yüksek kontrast')]]);
     field(a,t('Frame rate','Kare hızı'),'fps','select',state.presentation.fps,v=>{state.presentation.fps=v==='15'?15:30;record();refresh();},[[15,'15 FPS'],[30,'30 FPS']]);
     const partSet=el('fieldset');partSet.append(el('legend','',t('Parts to show','Gösterilecek parçalar')));const partChecks=el('div','checks');C.PARTS.forEach(k=>check(partChecks,partName(k),'part-'+k,state.config.parts.includes(k),v=>{state.config.parts=v?[...state.config.parts,k]:state.config.parts.filter(x=>x!==k);record();refresh();}));partSet.append(partChecks);body.append(partSet);
@@ -193,13 +196,13 @@
   }
   function buildDiagnostics(parent){const body=section(parent,t('Connection diagnostics','Bağlantı tanılaması'),'diagnostics');refs.diagnostics=el('dl','diagnostics');body.append(refs.diagnostics);refs.eventLog=el('ol','event-log');body.append(refs.eventLog);hint(body,t('Diagnostics stay here, never on stream. Failed retries do not change the last successful observation. Events are bounded to 40 entries; no telemetry is sent.','Tanılama burada kalır, yayında görünmez. Başarısız denemeler son başarılı gözlemi değiştirmez. Olaylar 40 kayıtla sınırlıdır; telemetri gönderilmez.'));}
   function buildDownloads(parent){const body=section(parent,t('Download and version','İndir ve sürüm'),'downloads');row(body,button(t('Download transparent hamster canvas PNG','Saydam hamster tuvali PNG indir'),'download-png',()=>{const canvas=renderer.canvas();if(!canvas){msg(t('Enable the hamster part to download its canvas.','Tuvali indirmek için hamster parçasını açın.'),true);return;}canvas.toBlob(blob=>{if(blob)download(blob,'squeektoshi-transparent-canvas.png','image/png');});}),link(t('Original project art PNG','Orijinal proje çizimi PNG'),'assets/original-project.png','btn'));
-    row(body,link(t('Static export ZIP','Statik çıktı ZIP'),'downloads/squeektoshi-static.zip','btn'),link(t('Source ZIP','Kaynak ZIP'),'downloads/squeektoshi-source.zip','btn'));hint(body,t('Version 2.0.0 · build details in build.json. Original canvas art is preserved; the PNG is a transparent render of that art.','Sürüm 2.0.0 · derleme ayrıntıları build.json içinde. Orijinal tuval çizimi korundu; PNG, bu çizimin saydam çıktısıdır.'));body.append(link(t('Build identity','Derleme kimliği'),'build.json'));}
+    row(body,link(t('Static export ZIP','Statik çıktı ZIP'),'downloads/squeektoshi-static.zip','btn'),link(t('Source ZIP','Kaynak ZIP'),'downloads/squeektoshi-source.zip','btn'));hint(body,t('Version 2.0.2 · build details in build.json. Original canvas art is preserved; the PNG is a transparent render of that art.','Sürüm 2.0.2 · derleme ayrıntıları build.json içinde. Orijinal tuval çizimi korundu; PNG, bu çizimin saydam çıktısıdır.'));body.append(link(t('Build identity','Derleme kimliği'),'build.json'));}
   function renderReport(){if(!refs.report)return;refs.report.replaceChildren();const rows=Store.sessions();if(!rows.length){hint(refs.report,t('No measured sessions saved in this browser. Open a live overlay with local saving enabled; demo previews never create reports.','Bu tarayıcıda ölçülen oturum kaydı yok. Yerel kayıt açıkken canlı kaplamayı açın; demo önizlemeleri rapor oluşturmaz.'));return;}
     const table=el('table'),thead=el('thead'),head=el('tr');[t('Session','Oturum'),t('Distance','Mesafe'),t('Running','Koşu'),t('Best','En iyi'),t('Gaps','Kesinti')].forEach(x=>head.append(el('th','',x)));thead.append(head);table.append(thead);const tbody=el('tbody');rows.forEach(x=>{const tr=el('tr'),v=C.sessionView(x.session);[x.id,C.formatDistance(v.distanceMm,ui),C.formatDuration(v.runningMs),C.formatDistance(v.recordMm,ui),String(x.session.gaps||0)].forEach(text=>tr.append(el('td','',text)));tbody.append(tr);});table.append(tbody);refs.report.append(table);}
   function previewSettings(){const copy=S.clone(state);copy.config.demo=!livePreview;copy.config.persist=false;return copy;}
   function syncDemoButtons(){document.querySelectorAll('button[data-demo]').forEach(node=>{const n=/** @type {HTMLButtonElement} */(node);n.disabled=livePreview;n.setAttribute('aria-pressed',String(n.dataset.demo===demoMode));});if(refs.rpm)refs.rpm.disabled=livePreview;}
   function refresh(updateRenderer=true){
-    if(!S.validate(state))return;
+    if(!S.validate(state)){msg(t('A setting is outside its limits. Undo or reset that section; the link was not updated.','Bir ayar sınırların dışında. Geri alın veya o bölümü sıfırlayın; bağlantı güncellenmedi.'),true);return;}
     const url=S.url(state,location.href);refs.url.value=url;refs.open.href=url;
     const [w,h]=S.FORMATS[state.presentation.format];refs.size.textContent=t(`OBS size: ${w} × ${h} px · ${state.config.demo?'Demo output':'Live output'}`,`OBS boyutu: ${w} × ${h} px · ${state.config.demo?'Demo çıktısı':'Canlı çıktı'}`);
     refs.previewLabel.textContent=livePreview?t('Live API preview','Canlı API önizlemesi'):t('Simulated preview','Simüle önizleme');
@@ -219,18 +222,18 @@
     const availableW=box.clientWidth,availableH=box.clientHeight;const fit=Math.min(availableW/w,availableH/h);previewScale=previewMode==='scroll'?1:previewMode==='close'?Math.min(1.5,fit*(state.page==='widget'?1:2.5)):fit;
     refs.inner.style.width=w+'px';refs.inner.style.height=h+'px';refs.inner.style.transform=`scale(${previewScale})`;refs.inner.style.position='absolute';
     refs.space.style.width=Math.max(availableW,w*previewScale)+'px';refs.space.style.height=Math.max(availableH,h*previewScale)+'px';
-    if(previewMode==='fit'){refs.inner.style.left=Math.max(0,(availableW-w*previewScale)/2)+'px';refs.inner.style.top=Math.max(0,(availableH-h*previewScale)/2)+'px';box.scrollLeft=0;box.scrollTop=0;}else{refs.inner.style.left='0';refs.inner.style.top='0';if(fitRAF)cancelAnimationFrame(fitRAF);fitRAF=requestAnimationFrame(()=>{fitRAF=0;const node=refs.host.querySelector('.sq-rig');if(node&&previewMode==='close'){const rect=node.getBoundingClientRect(),outer=box.getBoundingClientRect();box.scrollLeft+=rect.left+rect.width/2-outer.left-availableW/2;box.scrollTop+=rect.top+rect.height/2-outer.top-availableH/2;}positionHandles();});}
+    if(previewMode==='fit'){refs.inner.style.left=Math.max(0,(availableW-w*previewScale)/2)+'px';refs.inner.style.top=Math.max(0,(availableH-h*previewScale)/2)+'px';box.scrollLeft=0;box.scrollTop=0;}else{refs.inner.style.left='0';refs.inner.style.top='0';if(fitRAF)cancelAnimationFrame(fitRAF);fitRAF=requestAnimationFrame(()=>{fitRAF=0;const node=refs.host.querySelector('.sq-alert.is-on')||refs.host.querySelector('.sq-rig');if(node&&previewMode==='close'){const rect=node.getBoundingClientRect(),outer=box.getBoundingClientRect();box.scrollLeft+=rect.left+rect.width/2-outer.left-availableW/2;box.scrollTop+=rect.top+rect.height/2-outer.top-availableH/2;}positionHandles();});}
   }
   function positionHandles(){if(gesture)return;if(!refs.editor||!renderer)return;if(!edit||state.presentation.locked){refs.editor.replaceChildren();return;}
     const visible=new Set();
     const origin=refs.host.getBoundingClientRect();refs.host.querySelectorAll('[data-part]').forEach(node=>{
-      const part=node.dataset.part;if(!state.config.parts.includes(part))return;const rect=node.getBoundingClientRect();if(!rect.width||!rect.height||getComputedStyle(node).visibility==='hidden')return;visible.add('handle-'+part);const existing=refs.editor.querySelector('#handle-'+part);const handle=existing||button(partName(part),'handle-'+part,()=>{selected=part;});handle.className='edit-handle';handle.setAttribute('aria-label',t('Move ','Taşı: ')+partName(part));handle.style.left=(rect.left-origin.left)/previewScale+'px';handle.style.top=(rect.top-origin.top)/previewScale+'px';handle.style.transform=`scale(${1/previewScale})`;handle.style.transformOrigin='top left';
+      const part=node.dataset.part;if(!state.config.parts.includes(part))return;const rect=node.getBoundingClientRect();if(!rect.width||!rect.height||getComputedStyle(node).visibility==='hidden')return;visible.add('handle-'+part);const existing=refs.editor.querySelector('#handle-'+part);const handle=existing||button(partName(part),'handle-'+part,()=>{if(selected!==part){selected=part;build();}});handle.className='edit-handle';handle.setAttribute('aria-label',t('Move ','Taşı: ')+partName(part));handle.style.left=(rect.left-origin.left)/previewScale+'px';handle.style.top=(rect.top-origin.top)/previewScale+'px';handle.style.transform=`scale(${1/previewScale})`;handle.style.transformOrigin='top left';
       if(existing)return;
-      handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();selected=part;state.presentation.layout='custom';if(part==='alerts')state.presentation.alert.pos='custom';const b=state.presentation.boxes[part],step=e.shiftKey?5:1;b.x=Math.max(0,Math.min(100,b.x+(e.key==='ArrowRight'?step:e.key==='ArrowLeft'?-step:0)));b.y=Math.max(0,Math.min(100,b.y+(e.key==='ArrowDown'?step:e.key==='ArrowUp'?-step:0)));record();renderer.update(previewSettings());refresh(false);requestAnimationFrame(()=>document.getElementById('handle-'+part)?.focus());});
+      handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const changed=selected!==part;selected=part;state.presentation.layout='custom';if(part==='alerts')state.presentation.alert.pos='custom';const b=state.presentation.boxes[part],step=e.shiftKey?5:1;b.x=Math.max(0,Math.min(100,b.x+(e.key==='ArrowRight'?step:e.key==='ArrowLeft'?-step:0)));b.y=Math.max(0,Math.min(100,b.y+(e.key==='ArrowDown'?step:e.key==='ArrowUp'?-step:0)));record();if(changed)build();else{renderer.update(previewSettings());refresh(false);}requestAnimationFrame(()=>document.getElementById('handle-'+part)?.focus());});
       handle.addEventListener('pointerdown',e=>{
-        if(e.button!==0)return;e.preventDefault();selected=part;gesture=true;const startX=e.clientX,startY=e.clientY,original=S.clone(state.presentation.boxes[part]);handle.setPointerCapture(e.pointerId);
-        const move=ev=>{state.presentation.layout='custom';if(part==='alerts')state.presentation.alert.pos='custom';const [w,h]=S.FORMATS[state.presentation.format],b=state.presentation.boxes[part],step=state.presentation.snap?5:.1;const round=n=>Math.max(0,Math.min(100,Math.round(n/step)*step));b.x=round(original.x+(ev.clientX-startX)/(w*previewScale)*100);b.y=round(original.y+(ev.clientY-startY)/(h*previewScale)*100);renderer.update(previewSettings());};
-        const end=()=>{gesture=false;handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',end);handle.removeEventListener('pointercancel',end);record();refresh(false);};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);
+        if(e.button!==0)return;e.preventDefault();const changed=selected!==part;selected=part;gesture=true;const startX=e.clientX,startY=e.clientY,original=S.clone(state.presentation.boxes[part]);handle.setPointerCapture(e.pointerId);
+        const move=ev=>{state.presentation.layout='custom';if(part==='alerts')state.presentation.alert.pos='custom';const [w,h]=S.FORMATS[state.presentation.format],b=state.presentation.boxes[part],step=state.presentation.snap?5:.1;const round=n=>Math.max(0,Math.min(100,snap(n,step)));b.x=round(original.x+(ev.clientX-startX)/(w*previewScale)*100);b.y=round(original.y+(ev.clientY-startY)/(h*previewScale)*100);renderer.update(previewSettings());};
+        const end=()=>{gesture=false;handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',end);handle.removeEventListener('pointercancel',end);record();if(changed)build();else refresh(false);};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);
       });refs.editor.append(handle);
     });
     refs.editor.querySelectorAll('.edit-handle').forEach(handle=>{if(!visible.has(handle.id))handle.remove();});
@@ -245,9 +248,9 @@
     refs.eventLog.replaceChildren();d.events.slice(-8).reverse().forEach(e=>refs.eventLog.append(el('li','',formatTime(e.at)+' · '+(e.type.startsWith('alert-')?kindName(e.type.slice(6)):({live:t('Observation accepted','Gözlem kabul edildi'),lost:t('Signal unavailable','Sinyal yok'),sound:t('Sound played','Ses çalındı'),'audio-blocked':t('Audio blocked','Ses engellendi')})[e.type]||t('State changed','Durum değişti')))));
   }
   function restore(snapshot){state=snapshot.settings;profiles=snapshot.profiles;profileId=snapshot.profileId;build();}
-  async function copy(setup){const value=S.url(state,location.href,setup,ui);try{await navigator.clipboard.writeText(value);copied(setup);}catch(_){refs.url.value=value;openSections.add('preview-options');/** @type {HTMLDetailsElement} */(document.getElementById('preview-options')).open=true;refs.url.focus();refs.url.select();let ok=false;try{ok=document.execCommand('copy');}catch(_e){}if(ok)copied(setup);else msg(t('Link selected. Press Ctrl+C (Mac: Cmd+C), then paste it into your source.','Bağlantı seçildi. Ctrl+C (Mac: Cmd+C) ile kopyalayıp kaynağa yapıştırın.'));}}
+  async function copy(setup){if(!S.validate(state)){msg(t('A setting is outside its limits. Undo or reset that section, then copy again.','Bir ayar sınırların dışında. Geri alın veya o bölümü sıfırlayın, sonra yeniden kopyalayın.'),true);return;}const value=S.url(state,location.href,setup,ui);try{await navigator.clipboard.writeText(value);copied(setup);}catch(_){refs.url.value=value;openSections.add('preview-options');/** @type {HTMLDetailsElement} */(document.getElementById('preview-options')).open=true;refs.url.focus();refs.url.select();let ok=false;try{ok=document.execCommand('copy');}catch(_e){}if(ok)copied(setup);else msg(t('Link selected. Press Ctrl+C (Mac: Cmd+C), then paste it into your source.','Bağlantı seçildi. Ctrl+C (Mac: Cmd+C) ile kopyalayıp kaynağa yapıştırın.'));}}
   function copied(setup){msg(setup?t('Setup link copied.','Kurulum bağlantısı kopyalandı.'):t(`OBS URL copied. Apply the URL and dimensions in your source. Setup time: ${Math.round((performance.now()-pageStarted)/1000)}s.`,`OBS URL’si kopyalandı. URL ve boyutları kaynağınıza uygulayın. Kurulum süresi: ${Math.round((performance.now()-pageStarted)/1000)} sn.`));}
   function download(data,name,type){const blob=data instanceof Blob?data:new Blob([data],{type});const url=URL.createObjectURL(blob),a=link(name,url);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-  window.addEventListener('pagehide',()=>{renderer?.destroy();layoutObserver?.disconnect();if(fitRAF)cancelAnimationFrame(fitRAF);},{once:true});
+  window.addEventListener('pagehide',()=>{renderer?.destroy();layoutObserver?.disconnect();alertObserver?.disconnect();if(fitRAF)cancelAnimationFrame(fitRAF);},{once:true});
   build();
 })();

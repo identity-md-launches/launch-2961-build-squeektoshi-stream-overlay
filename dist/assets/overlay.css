@@ -1,5 +1,5 @@
 /* All stream styles are scoped to one mount. The document chrome is opt-in on output pages. */
-html:has(body.standalone), body.standalone { margin:0; width:100%; height:100%; background:transparent; }
+html.standalone-doc, body.standalone { margin:0; width:100%; height:100%; background:transparent; }
 body.standalone { overflow:hidden; }
 body.standalone > .sq-root { width:100%; height:100%; }
 .sq-root { position:relative; isolation:isolate; color:var(--text,#fdf3df); font:400 16px/1.4 system-ui,sans-serif; background:transparent; text-align:start; }
