@@ -45,7 +45,7 @@ npm test
 node --test tests/*.test.cjs
 ```
 
-`npm test` still runs the original 28 tests. The full command runs **56 tests**. `checkJs` remains enabled with proper DOM/global declarations and no excluded source files.
+`npm test` runs the 28 unchanged original tests and, through one `require` appended to `tests/logic.test.cjs` (the protected `package.json` cannot change), the regression suite: **57 tests**. `node --test tests/*.test.cjs` runs the regression file a second time on its own, so it reports more than 57. `checkJs` remains enabled with proper DOM/global declarations and no excluded source files.
 
 For browser checks, install Chromium with the locked Playwright CLI, then run:
 
@@ -61,6 +61,7 @@ node tests/browser-keyboard.mjs
 node tests/browser-resources.mjs
 node tests/browser-touch.mjs
 node tests/browser-alert-positions.mjs
+node tests/browser-preview-layout.mjs
 node tests/soak.mjs 1800000 artifacts/soak-final-results.json
 ```
 

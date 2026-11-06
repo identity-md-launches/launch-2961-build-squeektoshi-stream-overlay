@@ -89,7 +89,7 @@
   const STRINGS = {
     en: {
       running: 'Running', resting: 'Resting', connecting: 'Connecting', unknown: 'Checking',
-      healthyRest: 'Healthy rest', live: 'Live', lost: 'Lost', lastKnown: 'Last-known values', rpm: 'RPM', speed: 'Speed', distance: 'Total distance', work: 'Work units',
+      healthyRest: 'Healthy rest', live: 'Live', lost: 'Lost', lastKnown: 'Last-known values', noData: 'No data yet', rpm: 'RPM', speed: 'Speed', distance: 'Total distance', work: 'Work units',
       block: 'Squeek block', round: 'Settled round', supply: 'Supply', progress: 'Block progress',
       session: 'This stream', sessionDistance: 'Distance', sessionTime: 'Running time', sessionRecord: 'Longest run',
       lostTitle: 'SIGNAL LOST', lostText: 'Showing the last good values. Reconnecting by itself.', demo: 'Demo data',
@@ -103,7 +103,7 @@
     },
     tr: {
       running: 'Koşuyor', resting: 'Dinleniyor', connecting: 'Bağlanıyor', unknown: 'Kontrol ediliyor',
-      healthyRest: 'Sağlıklı uyku', live: 'Canlı', lost: 'Bağlantı yok', lastKnown: 'Son bilinen değerler', rpm: 'RPM', speed: 'Hız', distance: 'Toplam mesafe', work: 'İş birimi',
+      healthyRest: 'Sağlıklı uyku', live: 'Canlı', lost: 'Bağlantı yok', lastKnown: 'Son bilinen değerler', noData: 'Henüz veri yok', rpm: 'RPM', speed: 'Hız', distance: 'Toplam mesafe', work: 'İş birimi',
       block: 'Squeek bloğu', round: 'Uzlaşılan tur', supply: 'Arz', progress: 'Blok ilerlemesi',
       session: 'Bu yayın', sessionDistance: 'Mesafe', sessionTime: 'Koşu süresi', sessionRecord: 'En uzun koşu',
       lostTitle: 'SİNYAL KAYIP', lostText: 'Son geçerli değerler ekranda. Kendiliğinden yeniden bağlanıyor.', demo: 'Demo verisi',

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.1
+
+- Fixed the configurator preview layout: the mounted renderer root now fills the format-sized preview box (`src/assets/configurator.css`), so the rig, alert and badge are placed exactly where `overlay.html`/`widget.html` put them instead of collapsing to the top-left with a zero-height root.
+- A lost signal with no reading ever received now says "Lost · No data yet" / "Bağlantı yok · Henüz veri yok" instead of claiming last-known values; the supply line only says last-known when a supply value was received.
+- `npm test` now reaches the regression suite (`tests/logic.test.cjs` requires `tests/regressions.test.cjs`; the 28 original tests are unchanged and `package.json` stays protected).
+- Configurator header wraps at narrow effective widths (fixes 21px horizontal overflow at 768px with 200% zoom).
+- Added `tests/browser-preview-layout.mjs` regression. Release identity 2.0.1, based on commit `cacb4d8cead5b5f8ab12f7a8d9e5dbe498f80a14`.
+
 ## 2.0.0
 
 - Replaced the iframe preview and page-global runtime with one scoped DOM/canvas renderer and explicit update, alert, cut and destroy lifecycle.

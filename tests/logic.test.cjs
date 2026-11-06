@@ -376,3 +376,7 @@ test('sprites keep a rectangular shape', () => {
     assert.deepEqual([...widths(icon)], [12]);
   });
 });
+
+// package.json is fixed build configuration, so the declared `npm test` command reaches the
+// regression suite from here. The 28 original tests above are unchanged.
+require('./regressions.test.cjs');

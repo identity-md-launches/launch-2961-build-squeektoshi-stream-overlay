@@ -6,7 +6,7 @@ source=ROOT/'src'
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 files={str(p.relative_to(source)):sha(p) for p in sorted(source.rglob('*')) if p.is_file() and p.name!='build.json'}
 build_id=hashlib.sha256(json.dumps(files,sort_keys=True,separators=(',',':')).encode()).hexdigest()
-metadata={'version':'2.0.0','buildId':build_id,'basedOnCommit':'44e6127595d7e248785eb195fd0cb4d7bc14be24','builtAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostingName':'squeektoshi-stream-overlay-obs-a.identitymd.eth','runtimeFiles':files}
+metadata={'version':'2.0.1','buildId':build_id,'basedOnCommit':'cacb4d8cead5b5f8ab12f7a8d9e5dbe498f80a14','builtAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hostingName':'squeektoshi-stream-overlay-obs-a.identitymd.eth','runtimeFiles':files}
 (source/'build.json').write_text(json.dumps(metadata,indent=2)+'\n')
 subprocess.run(['node','scripts/build.mjs'],cwd=ROOT,check=True)
 artifacts=ROOT/'artifacts';artifacts.mkdir(exist_ok=True)

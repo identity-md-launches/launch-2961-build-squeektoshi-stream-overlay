@@ -4,7 +4,18 @@
 
 The static implementation is delivered in `src/` and `dist/`. **Full acceptance is not claimed**: native OBS/Streamlabs, WebKit, native-device/accessibility checks, direct Chromium API transport on this host, the future published build/CSP and provider commercial confirmation remain unverified. These are worker-side results, not independent certification.
 
-Release **2.0.0**, based on commit **44e6127595d7e248785eb195fd0cb4d7bc14be24**. Content-derived build identity and file hashes are in `dist/build.json` and `artifacts/build.json`. The submission commit is assigned after handoff; this build does not pretend its modifications are already part of the base commit. The project remains `squeektoshi-stream-overlay-obs-a.identitymd.eth`. No contract, token, address, wallet or account action was performed. The original endpoints, art, HTML links, 28 tests and root dependency manifests remain.
+Release **2.0.1**, based on commit **cacb4d8cead5b5f8ab12f7a8d9e5dbe498f80a14** (2.0.0 was based on 44e6127595d7e248785eb195fd0cb4d7bc14be24). Content-derived build identity and file hashes are in `dist/build.json` and `artifacts/build.json`. The submission commit is assigned after handoff; this build does not pretend its modifications are already part of the base commit. The project remains `squeektoshi-stream-overlay-obs-a.identitymd.eth`. No contract, token, address, wallet or account action was performed. The original endpoints, art, HTML links, 28 tests and root dependency manifests remain.
+
+## Revision 2.0.1
+
+Reviewer findings were reproduced in headless Chromium (Playwright 1.63.0, Chromium 153.0.8010.12 on this host) before being fixed.
+
+- Preview layout (high). Reproduced: `#preview` measured 356×0 because `overlay.css` `.sq-root{position:relative}` (loaded later) overrode `.preview-output{position:absolute;inset:0}`, so `fit()` returned early. Fix `src/assets/configurator.css:39`. The preview root is now 1920×1080 / 480×270, and its rig/alert/badge left/top/scale equal overlay.html/widget.html exactly (`48px 681px`, `332.67px 98px scale(0.704846)`, …).
+- No-data lost label (medium). Reproduced with the API aborted: the label read `Lost · Last-known values` over dashes. Fix `src/assets/overlay.js:110,121,123` and new `noData` strings in `src/assets/core.js:92,106`.
+- `npm test` coverage (medium). Reproduced: only 28 tests ran. `package.json` is protected build configuration in this assignment, so `tests/logic.test.cjs` now ends with `require('./regressions.test.cjs')` and `npm test` runs 57.
+- During the revision run, `browser-suite` "200% CSS zoom reflow" failed on this host's Chromium for 2.0.0 too: the header overflowed 768px by 21px. Fix `src/assets/configurator.css:26,28,73`. The suite is back to 21/21.
+
+The 30-minute soak, clean-source and WebKit records below are from 2.0.0 and were not re-run for this revision.
 
 ## Commands and actual results
 
@@ -13,8 +24,8 @@ Release **2.0.0**, based on commit **44e6127595d7e248785eb195fd0cb4d7bc14be24**.
 | `npm run build` / `node scripts/build.mjs` | Production export built; `artifacts/commands.json` and `build-log.txt`. Relative assets served under `/preview/`. |
 | `node scripts/install-tools.mjs` | Exact TypeScript/Playwright/core versions installed only in scratch and verified against integrity metadata. |
 | `node test/scratch/tools/node_modules/typescript/bin/tsc -p tsconfig.json` | Exit 0; checkJs enabled, no disabled/excluded source. `artifacts/typecheck.txt`. |
-| `npm test` | Original 28/28 unchanged tests. |
-| `node --test tests/*.test.cjs` | 56/56 passing tests, including 28 new regressions. `artifacts/logic-tests.txt`. |
+| `npm test` | 57/57 pass: the 28 unchanged original tests plus the regression suite, required from the end of `tests/logic.test.cjs`. |
+| `node --test tests/*.test.cjs` | Passes. The regression file also runs on its own here, so it is counted twice. 2.0.0 record: `artifacts/logic-tests.txt`. |
 | `node tests/browser-suite.mjs` | 21/21 passing Chromium checks; `artifacts/browser-results.json`. |
 | `node tests/browser-extended.mjs` | 10/10 passing checks; `artifacts/browser-extended-results.json`. |
 | `node tests/browser-epochs.mjs` | Six browser responses crossing higher/lower epochs: 4700mm measured total, 4000mm best. `artifacts/browser-epoch-results.json`. |
@@ -23,7 +34,8 @@ Release **2.0.0**, based on commit **44e6127595d7e248785eb195fd0cb4d7bc14be24**.
 | `node tests/browser-resources.mjs` | 20 mounts with four sound tests; zero remaining timers, RAF callbacks, observers, media listeners, audio contexts or nodes. `artifacts/browser-resources-results.json`. |
 | `node tests/browser-touch.mjs` | Emulated touch drag and a single touch undo restore the original placement. Physical device remains unverified. |
 | `node tests/browser-alert-positions.mjs` | 100 independent alert-position × format × language cases; visible, bounded, no content overlap. |
-| Pinned `taste.mjs --out test/scratch/taste` | 16/16 checks pass; `artifacts/taste-results.json`. |
+| `node tests/browser-preview-layout.mjs` | 2.0.1 regression. The Full scene, Hamster only and Hamster + essentials previews anchor the rig, alert and badge to the same edges and offsets as the copied `overlay.html`/`widget.html` URL at the same size. Hamster only + Try running: the alert does not cover the hamster. An offline widget shows `Lost · No data yet` / `Bağlantı yok · Henüz veri yok`. Fails against the 2.0.0 CSS (preview root height 0). `artifacts/browser-preview-layout-results.json`. |
+| Pinned `taste.mjs --out test/scratch/taste` | 16/16 checks pass on the 2.0.1 export; `artifacts/taste-results.json`. |
 | `node tests/soak.mjs 1800000 artifacts/soak-final-results.json` | Real-time 30-minute run; complete result, samples, teardown and runtime hashes in that JSON and final `validation-summary.json`. |
 | Clean source install/build/typecheck/test | `artifacts/clean-source-results.json`. No working-tree dependencies or vendored registry required. |
 | `python3 scripts/package-release.py` and `tests/release-check.mjs` | Source/static archives and local download/metadata validation. `artifacts/release-results.json`. |

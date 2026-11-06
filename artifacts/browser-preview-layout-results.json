@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "layouts": [
+    {
+      "name": "full",
+      "rel": "overlay.html?v=2",
+      "preview": {
+        "W": 1920,
+        "H": 1080,
+        "rig": "left:48 bottom:48",
+        "alert": "center top:48",
+        "badge": "left:48 bottom:48"
+      },
+      "output": {
+        "W": 1920,
+        "H": 1080,
+        "rig": "left:48 bottom:48",
+        "alert": "center top:48",
+        "badge": "left:48 bottom:48"
+      }
+    },
+    {
+      "name": "hamster",
+      "rel": "widget.html?parts=hamster,alerts&v=2",
+      "preview": {
+        "W": 480,
+        "H": 270,
+        "rig": "right:12 bottom:12",
+        "alert": "center top:12",
+        "badge": "left:12 bottom:12"
+      },
+      "output": {
+        "W": 480,
+        "H": 270,
+        "rig": "right:12 bottom:12",
+        "alert": "center top:12",
+        "badge": "left:12 bottom:12"
+      }
+    },
+    {
+      "name": "essentials",
+      "rel": "overlay.html?parts=hamster,progress,alerts&v=2",
+      "preview": {
+        "W": 1920,
+        "H": 1080,
+        "rig": "left:48 bottom:48",
+        "alert": "center top:48",
+        "badge": "left:48 bottom:48"
+      },
+      "output": {
+        "W": 1920,
+        "H": 1080,
+        "rig": "left:48 bottom:48",
+        "alert": "center top:48",
+        "badge": "left:48 bottom:48"
+      }
+    }
+  ],
+  "noData": [
+    {
+      "lang": "en",
+      "text": "Lost · No data yet"
+    },
+    {
+      "lang": "tr",
+      "text": "Bağlantı yok · Henüz veri yok"
+    }
+  ],
+  "hamsterAlert": {
+    "art": {
+      "x": 263.7200622558594,
+      "y": 326.464599609375,
+      "w": 100.37002563476562,
+      "h": 118.55230712890625
+    },
+    "alert": {
+      "x": 35.912498474121094,
+      "y": 262.6812438964844,
+      "w": 317.8968811035156,
+      "h": 56.436187744140625
+    }
+  }
+}

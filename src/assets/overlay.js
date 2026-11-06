@@ -107,7 +107,7 @@
     function render(){
       if(destroyed)return;
       const d=engine.display,T=C.strings(config.lang),signal=engine.signal(),r=engine.reading();
-      const last=signal==='lost',known=last?T.lastKnown:'';
+      const last=signal==='lost',known=last?(engine.lastSuccess()!==null?T.lastKnown:T.noData):'';
       let state=signal==='connecting'?T.connecting:signal==='lost'?T.lost:d.coreStatus==='SPINNING'?T.running+' · '+C.formatNumber(d.rpm,config.lang,1)+' RPM':d.coreStatus==='IDLE'?T.resting+' · '+T.healthyRest:T.unknown;
       set(status,(source()==='demo'?T.demo+' · ':signal==='live'?T.live+' · ':'')+state+(known?' · '+known:''));
       // Missing fields are dashes; the previous display is reserved for an explicit lost/last-known state.
@@ -118,9 +118,9 @@
       const view=C.sessionView(engine.session),at=engine.lastReadingAt();
       const extra=engine.isSpinning()&&at!==null?Math.min(30000,Math.max(0,Date.now()-at)):0;
       set(refs.sessionDistance,distance(view.distanceMm));set(refs.sessionTime,C.formatDuration(view.runningMs+extra));set(refs.sessionRecord,distance(view.recordMm));
-      set(refs.supply,(supply?C.formatSupply(supply,config.lang):'–')+(supplyLost?' · '+T.lastKnown:''));
+      set(refs.supply,(supply?C.formatSupply(supply,config.lang):'–')+(supplyLost&&supply?' · '+T.lastKnown:''));
       badge.hidden=!!status||config.parts.length===0;
-      set(badge,(source()==='demo'?T.demo+' · ':'')+(last?T.lost+' · '+T.lastKnown:signal==='connecting'?T.connecting:T.live));
+      set(badge,(source()==='demo'?T.demo+' · ':'')+(last?T.lost+' · '+known:signal==='connecting'?T.connecting:T.live));
       if(stage&&!motion()){const key=JSON.stringify({mode:artState().mode,lost:artState().lost});if(host.dataset.still!==key){host.dataset.still=key;stage.render(artState(),0);draws++;}}
       fit();
     }

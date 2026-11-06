@@ -1,6 +1,6 @@
 {
-  "at": "2026-11-06T13:35:39.306Z",
-  "browser": "154.0.8037.0",
+  "at": "2026-11-06T14:10:24.792Z",
+  "browser": "153.0.8010.12",
   "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src https://api.squeekchain.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'",
   "passed": 21,
   "failed": 0,
@@ -8,7 +8,7 @@
     {
       "name": "painted responsive configurator, primary action visible at 390, relative assets",
       "passed": true,
-      "ms": 2560,
+      "ms": 2120,
       "detail": [
         {
           "width": 320,
@@ -16,7 +16,7 @@
           "height": 89.375,
           "visible": true,
           "scroll": 320,
-          "copy": 660.78125,
+          "copy": 746.859375,
           "frames": 0
         },
         {
@@ -34,7 +34,7 @@
           "height": 116.875,
           "visible": true,
           "scroll": 768,
-          "copy": 660.78125,
+          "copy": 684.78125,
           "frames": 0
         },
         {
@@ -51,50 +51,50 @@
     {
       "name": "first-use: choose hamster, run, sleep, copy URL + dimensions under 60 seconds",
       "passed": true,
-      "ms": 633,
+      "ms": 537,
       "detail": {
-        "durationMs": 564
+        "durationMs": 481
       }
     },
     {
       "name": "demo cut/restore changes pose, clears alert, no API or session writes",
       "passed": true,
-      "ms": 570
+      "ms": 592
     },
     {
       "name": "profiles create/save/copy/rename/delete/undo and valid draft restore",
       "passed": true,
-      "ms": 542
+      "ms": 535
     },
     {
       "name": "import/export and URL check are atomic, portable and preserve settings",
       "passed": true,
-      "ms": 320
+      "ms": 305
     },
     {
       "name": "independent EN/TR interface and stream language, all five formats",
       "passed": true,
-      "ms": 214
+      "ms": 187
     },
     {
       "name": "20 undo/redo steps and visual edits preserve ID",
       "passed": true,
-      "ms": 2858
+      "ms": 2567
     },
     {
       "name": "custom layout numeric and keyboard controls, lock and reset",
       "passed": true,
-      "ms": 551
+      "ms": 564
     },
     {
       "name": "all-hidden state is explicit; preview backgrounds do not change URL",
       "passed": true,
-      "ms": 230
+      "ms": 231
     },
     {
       "name": "keyboard focus and 200% CSS zoom reflow",
       "passed": true,
-      "ms": 459,
+      "ms": 931,
       "detail": {
         "width": 768,
         "scroll": 768,
@@ -106,7 +106,7 @@
     {
       "name": "320 combinations: formats × themes × languages × positions, painted and bounded",
       "passed": true,
-      "ms": 3415,
+      "ms": 2996,
       "detail": {
         "count": 320,
         "failures": []
@@ -115,7 +115,7 @@
     {
       "name": "all 5 alerts sequential, gap, long Turkish widget text stays bounded",
       "passed": true,
-      "ms": 14706,
+      "ms": 14675,
       "detail": {
         "alerts": 5,
         "gaps": 5
@@ -124,7 +124,7 @@
     {
       "name": "audio master-off silence, three generated tones, loss cancellation",
       "passed": true,
-      "ms": 111,
+      "ms": 106,
       "detail": {
         "oscillatorStarts": 9,
         "tones": 3
@@ -133,16 +133,16 @@
     {
       "name": "motion-off stops draw loop, reduced-motion stops it, 15/30 FPS bounded",
       "passed": true,
-      "ms": 4590,
+      "ms": 4579,
       "detail": {
-        "draws15": 14,
+        "draws15": 15,
         "draws30": 25
       }
     },
     {
       "name": "25 remounts; destroy cancels timers, RAF, observers and delayed fetch/finally",
       "passed": true,
-      "ms": 6743,
+      "ms": 6785,
       "detail": {
         "remounts": 25,
         "delayedRequests": 1
@@ -151,11 +151,11 @@
     {
       "name": "live polling outage/recovery, stale readings and economy independence",
       "passed": true,
-      "ms": 15672,
+      "ms": 15698,
       "detail": {
         "requests": 4,
         "intervals": [
-          4999,
+          4990,
           5000,
           5000
         ]
@@ -172,17 +172,17 @@
     {
       "name": "storage denied/quota/corruption remain usable",
       "passed": true,
-      "ms": 800
+      "ms": 742
     },
     {
       "name": "standalone scene and widget are transparent, painted, no management UI",
       "passed": true,
-      "ms": 910
+      "ms": 826
     },
     {
       "name": "transparent original artwork PNG generated from preserved canvas",
       "passed": true,
-      "ms": 241,
+      "ms": 226,
       "detail": {
         "bytes": 3867
       }
